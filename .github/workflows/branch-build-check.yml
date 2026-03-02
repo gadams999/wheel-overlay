@@ -1,0 +1,39 @@
+﻿name: Branch Build Check
+
+on:
+  push:
+    branches-ignore:
+      - main
+      - develop
+
+permissions:
+  contents: read
+
+jobs:
+  fast-build-check:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: |
+        Write-Host "Building project..."
+        dotnet build --no-restore --configuration Debug
+      shell: pwsh
+
+    - name: Run Fast Tests (10 iterations)
+      run: |
+        Write-Host "Running fast test suite with 10 iterations per property test..."
+        $env:FAST_TESTS = "true"
+        dotnet test --no-build --verbosity normal --configuration Debug
+        Write-Host "Fast tests passed - branch is buildable"
+      shell: pwsh
