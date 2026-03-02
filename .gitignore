@@ -6,6 +6,7 @@
 temp/
 
 # Build results
+build_log.txt
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/
@@ -54,7 +55,7 @@ test.*
 !**/Tests/**
 !**/*Test*.cs
 !**/*Tests*.cs
-!Scripts/*.ps1
+!scripts/*.ps1
 
 # Test results and coverage
 TestResults/

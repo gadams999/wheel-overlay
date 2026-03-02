@@ -32,7 +32,7 @@ A transparent overlay application for sim racing wheels (e.g., BavarianSimTec Al
 
 ## Installation
 
-1.  Download the latest `.msi` from the [Releases](https://github.com/gadams999/obrl/releases) page.
+1.  Download the latest `.msi` from the [Releases](https://github.com/gadams999/wheel-overlay/releases) page.
 2.  Run the installer.
 3.  Launch "WheelOverlay" from the Start Menu or Desktop shortcut.
 
@@ -190,7 +190,6 @@ Requirements:
 - Visual Studio 2022 or later (recommended)
 
 ```bash
-cd wheel_overlay
 dotnet build
 ```
 
@@ -203,7 +202,6 @@ The project includes comprehensive automated tests covering all user interaction
 For thorough validation with full property-based test coverage:
 
 ```bash
-cd wheel_overlay/WheelOverlay.Tests
 dotnet test
 ```
 
@@ -214,7 +212,6 @@ This runs all tests with 100 iterations per property test, providing comprehensi
 For quick feedback during development:
 
 ```bash
-cd wheel_overlay/WheelOverlay.Tests
 dotnet test --configuration FastTests
 ```
 
@@ -236,17 +233,22 @@ Test coverage includes:
 Use test mode to develop without physical hardware:
 
 ```bash
-cd wheel_overlay/WheelOverlay
-dotnet run -- --test-mode
+dotnet run --project WheelOverlay -- --test-mode
 ```
 
 ## Contributing
 
-Contributions are welcome! Please:
-1.  Fork the repository
-2.  Create a feature branch
-3.  Make your changes with tests
-4.  Submit a pull request
+Contributions are welcome! See [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) for details.
+
+## Documentation
+
+- [Build Commands](docs/BUILD_COMMANDS.md) — How to build the project
+- [CI/CD Setup](docs/CI_CD_SETUP.md) — GitHub Actions workflow details
+- [Property Testing](docs/PROPERTY_TESTING.md) — Property-based testing guide
+- [Testing Locally](docs/TESTING_LOCALLY.md) — Running and debugging tests
+- [Monitoring Logs](docs/MONITORING_LOGS.md) — Log monitoring guide
+- [Functional Requirements](docs/functional_requirements.md) — Product requirements
+- [Technical Requirements](docs/technical_requirements.md) — Technical specifications
 
 ## License
 
@@ -254,8 +256,8 @@ Contributions are welcome! Please:
 
 ## Support
 
-- **Issues**: Report bugs or request features on [GitHub Issues](https://github.com/gadams999/obrl/issues)
-- **Discussions**: Ask questions on [GitHub Discussions](https://github.com/gadams999/obrl/discussions)
+- **Issues**: Report bugs or request features on [GitHub Issues](https://github.com/gadams999/wheel-overlay/issues)
+- **Discussions**: Ask questions on [GitHub Discussions](https://github.com/gadams999/wheel-overlay/discussions)
 
 ## Version History
 
