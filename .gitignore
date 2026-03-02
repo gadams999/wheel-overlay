@@ -2,6 +2,9 @@
 .kiro/
 !.kiro/steering/
 
+# Temporary working notes
+temp/
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
