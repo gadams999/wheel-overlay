@@ -45,12 +45,13 @@ test_*
 *_test.*
 *.test.*
 test.*
-# But keep test project directories and source files
+# But keep test project directories, source files, and Scripts
 !WheelOverlay.Tests/
 !**/*.Tests.*
 !**/Tests/**
 !**/*Test*.cs
 !**/*Tests*.cs
+!Scripts/*.ps1
 
 # Test results and coverage
 TestResults/
