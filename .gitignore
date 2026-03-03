@@ -1,6 +1,5 @@
-# Kiro IDE files - ignore everything except steering
-.kiro/
-!.kiro/steering/
+# Kiro IDE files - track steering, specs, and settings
+# Exclude only transient/cache files if any appear later
 
 # Temporary working notes
 temp/
