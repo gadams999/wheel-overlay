@@ -1,5 +1,6 @@
-using Xunit;
+using System;
 using System.Linq;
+using Xunit;
 using WheelOverlay.Models;
 
 namespace WheelOverlay.Tests
@@ -229,5 +230,98 @@ namespace WheelOverlay.Tests
             Assert.Equal("E", profile.TextLabels[4]);
             Assert.Equal("F", profile.TextLabels[5]);
         }
+
+        [Fact]
+        public void PreV060Json_WithoutThemePreferenceAndDialLayout_LoadsWithCorrectDefaults()
+        {
+            // Arrange - JSON representing a pre-v0.6.0 settings file:
+            // - No ThemePreference property
+            // - Layout is "Vertical" (not Dial)
+            var preV060Json = @"{
+                ""Profiles"": [
+                    {
+                        ""Id"": ""aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"",
+                        ""Name"": ""MyProfile"",
+                        ""DeviceName"": ""BavarianSimTec Alpha"",
+                        ""Layout"": ""Vertical"",
+                        ""TextLabels"": [""DASH"", ""TC2"", ""MAP"", ""FUEL"", ""BRGT"", ""VOL"", ""BOX"", ""DIFF""],
+                        ""PositionCount"": 8,
+                        ""GridRows"": 2,
+                        ""GridColumns"": 4
+                    }
+                ],
+                ""SelectedProfileId"": ""aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"",
+                ""Layout"": ""Vertical"",
+                ""SelectedDeviceName"": ""BavarianSimTec Alpha""
+            }";
+
+            // Act
+            var settings = AppSettings.FromJson(preV060Json);
+
+            // Assert - ThemePreference defaults to System when missing from JSON
+            Assert.Equal(ThemePreference.System, settings.ThemePreference);
+
+            // Assert - Existing layout is preserved, not changed to Dial
+            var profile = settings.Profiles[0];
+            Assert.Equal(DisplayLayout.Vertical, profile.Layout);
+            Assert.NotEqual(DisplayLayout.Dial, profile.Layout);
+
+            // Assert - Other properties loaded correctly
+            Assert.Equal("MyProfile", profile.Name);
+            Assert.Equal(8, profile.TextLabels.Count);
+            Assert.Equal("DASH", profile.TextLabels[0]);
+        }
+
+        [Fact]
+        public void ThemePreference_HasExactlyThreeValues()
+        {
+            var values = Enum.GetValues<ThemePreference>();
+            Assert.Equal(3, values.Length);
+            Assert.Contains(ThemePreference.System, values);
+            Assert.Contains(ThemePreference.Light, values);
+            Assert.Contains(ThemePreference.Dark, values);
+        }
+
+        [Fact]
+        public void DisplayLayout_IncludesDial()
+        {
+            var values = Enum.GetValues<DisplayLayout>();
+            Assert.Contains(DisplayLayout.Dial, values);
+            Assert.True(Enum.IsDefined(DisplayLayout.Dial));
+        }
+
+        [Fact]
+        public void PreV060LegacyJson_WithoutProfilesOrNewProperties_MigratesWithCorrectDefaults()
+        {
+            // Arrange - Minimal legacy JSON (pre-profiles, pre-v0.6.0):
+            // No Profiles array, no ThemePreference, no EnableAnimations, layout is Grid
+            var legacyJson = @"{
+                ""Layout"": ""Grid"",
+                ""TextLabels"": [""A"", ""B"", ""C"", ""D"", ""E"", ""F"", ""G"", ""H""],
+                ""SelectedDeviceName"": ""BavarianSimTec Alpha"",
+                ""FontSize"": 24,
+                ""SelectedTextColor"": ""#00FF00""
+            }";
+
+            // Act
+            var settings = AppSettings.FromJson(legacyJson);
+
+            // Assert - v0.6.0 properties default correctly
+            Assert.Equal(ThemePreference.System, settings.ThemePreference);
+            Assert.Equal(DisplayLayout.Grid, settings.Layout);
+
+            // Assert - Legacy migration created a profile
+            Assert.Single(settings.Profiles);
+            var profile = settings.Profiles[0];
+            Assert.Equal("Default", profile.Name);
+            Assert.Equal(DisplayLayout.Grid, profile.Layout);
+            Assert.NotEqual(DisplayLayout.Dial, profile.Layout);
+
+            // Assert - Original properties preserved through migration
+            Assert.Equal("A", profile.TextLabels[0]);
+            Assert.Equal(24, settings.FontSize);
+            Assert.Equal("#00FF00", settings.SelectedTextColor);
+        }
+
     }
 }

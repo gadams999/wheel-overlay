@@ -66,24 +66,24 @@
 - [x] 10.3 Bind theme preference combo to `AppSettings.ThemePreference` and trigger `ThemeService.Preference` update on Apply
 
 ## Task 11: Theme the About Window
-- [ ] 11.1 Convert `AboutWindow.xaml` hardcoded colors/styles to use `{DynamicResource}` theme resources
+- [x] 11.1 Convert `AboutWindow.xaml` hardcoded colors/styles to use `{DynamicResource}` theme resources
 
 ## Task 12: Settings serialization backward compatibility
-- [ ] 12.1 Verify that `AppSettings.FromJson` correctly handles pre-v0.6.0 JSON missing `ThemePreference` (defaults to `System`) and missing `Dial` layout value (preserves existing layout)
-- [ ] 12.2 Add unit test for loading pre-v0.6.0 JSON without new properties
+- [x] 12.1 Verify that `AppSettings.FromJson` correctly handles pre-v0.6.0 JSON missing `ThemePreference` (defaults to `System`) and missing `Dial` layout value (preserves existing layout)
+- [x] 12.2 Add unit test for loading pre-v0.6.0 JSON without new properties
 
 ## Task 13: Property-based tests
-- [ ] 13.1 Create `WheelOverlay.Tests/DialPositionConfigPropertyTests.cs` — Property 1: Dial angle even distribution. *For any* position count N (2–20), verify equal angular spacing between consecutive positions. Tag: `Feature: v0.6.0-enhancements, Property 1: Dial angle even distribution` | <PBT>
-- [ ] 13.2 Create `WheelOverlay.Tests/SettingsViewModelPropertyTests.cs` (or append to existing) — Property 2: Grid controls hidden for non-grid layouts. *For any* DisplayLayout value, grid controls should be applicable only when layout is Grid. Tag: `Feature: v0.6.0-enhancements, Property 2: Grid controls hidden for non-grid layouts` | <PBT>
-- [ ] 13.3 Create `WheelOverlay.Tests/ThemeServicePropertyTests.cs` — Property 3: Theme resolution from preference. *For any* ThemePreference and system theme combination, verify effective theme matches expected resolution. Tag: `Feature: v0.6.0-enhancements, Property 3: Theme resolution from preference` | <PBT>
-- [ ] 13.4 Create `WheelOverlay.Tests/AppSettingsSerializationPropertyTests.cs` — Property 4: AppSettings serialization round-trip. *For any* valid AppSettings with all enum values including Dial and ThemePreference, serialize then deserialize should produce equivalent object. Tag: `Feature: v0.6.0-enhancements, Property 4: AppSettings serialization round-trip` | <PBT>
+- [x] 13.1 Create `WheelOverlay.Tests/DialPositionConfigPropertyTests.cs` — Property 1: Dial angle even distribution. *For any* position count N (2–20), verify equal angular spacing between consecutive positions. Tag: `Feature: v0.6.0-enhancements, Property 1: Dial angle even distribution` | <PBT>
+- [x] 13.2 Create `WheelOverlay.Tests/SettingsViewModelPropertyTests.cs` (or append to existing) — Property 2: Grid controls hidden for non-grid layouts. *For any* DisplayLayout value, grid controls should be applicable only when layout is Grid. Tag: `Feature: v0.6.0-enhancements, Property 2: Grid controls hidden for non-grid layouts` | <PBT>
+- [x] 13.3 Create `WheelOverlay.Tests/ThemeServicePropertyTests.cs` — Property 3: Theme resolution from preference. *For any* ThemePreference and system theme combination, verify effective theme matches expected resolution. Tag: `Feature: v0.6.0-enhancements, Property 3: Theme resolution from preference` | <PBT>
+- [x] 13.4 Create `WheelOverlay.Tests/AppSettingsSerializationPropertyTests.cs` — Property 4: AppSettings serialization round-trip. *For any* valid AppSettings with all enum values including Dial and ThemePreference, serialize then deserialize should produce equivalent object. Tag: `Feature: v0.6.0-enhancements, Property 4: AppSettings serialization round-trip` | <PBT>
 
 ## Task 14: Unit tests
-- [ ] 14.1 Create `WheelOverlay.Tests/DialPositionConfigTests.cs` with unit tests: default 8-position angles match expected approximate values; config has entries for positions 1–8; `AngleToPoint` returns correct coordinates for known angles
-- [ ] 14.2 Add unit tests for `ThemeService`: registry-missing fallback returns light mode; known registry values produce expected results
-- [ ] 14.3 Add unit test for pre-v0.6.0 JSON backward compatibility (missing ThemePreference and Dial properties load with correct defaults)
-- [ ] 14.4 Add unit test verifying `ThemePreference` enum has exactly three values and `DisplayLayout` enum includes `Dial`
-- [ ] 14.5 Add unit tests verifying both `LightTheme.xaml` and `DarkTheme.xaml` contain all required resource keys
+- [x] 14.1 Create `WheelOverlay.Tests/DialPositionConfigTests.cs` with unit tests: default 8-position angles match expected approximate values; config has entries for positions 1–8; `AngleToPoint` returns correct coordinates for known angles
+- [x] 14.2 Add unit tests for `ThemeService`: registry-missing fallback returns light mode; known registry values produce expected results
+- [x] 14.3 Add unit test for pre-v0.6.0 JSON backward compatibility (missing ThemePreference and Dial properties load with correct defaults)
+- [x] 14.4 Add unit test verifying `ThemePreference` enum has exactly three values and `DisplayLayout` enum includes `Dial`
+- [x] 14.5 Add unit tests verifying both `LightTheme.xaml` and `DarkTheme.xaml` contain all required resource keys
 
 ## Task 15 (Optional): Theme-appropriate icons
 - [ ]* 15.1 Create light and dark variants of the system tray icon and add icon-swap logic in `ThemeChanged` handler

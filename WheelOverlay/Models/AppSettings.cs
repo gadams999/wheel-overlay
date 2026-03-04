@@ -72,10 +72,21 @@ public enum DisplayLayout
             "BavarianSimTec Alpha"
         };
 
-        private static readonly string SettingsPath = Path.Combine(
+        private static readonly string SettingsDirectory = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "WheelOverlay",
-            "settings.json");
+            "WheelOverlay");
+
+        private static readonly string SettingsPath = Path.Combine(SettingsDirectory, "settings.json");
+
+        /// <summary>
+        /// Returns the directory containing settings and log files.
+        /// </summary>
+        public static string GetSettingsDirectory() => SettingsDirectory;
+
+        /// <summary>
+        /// Returns the full path to the settings JSON file.
+        /// </summary>
+        public static string GetSettingsPath() => SettingsPath;
 
         public static AppSettings Load()
         {

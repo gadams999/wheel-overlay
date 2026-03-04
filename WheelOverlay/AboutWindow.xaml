@@ -8,10 +8,10 @@
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
         ShowInTaskbar="False"
-        Background="#1E1E1E">
+        Background="{DynamicResource ThemeBackground}">
     <Window.Resources>
         <Style TargetType="TextBlock">
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Foreground" Value="{DynamicResource ThemeForeground}"/>
             <Setter Property="TextAlignment" Value="Center"/>
         </Style>
     </Window.Resources>
@@ -66,7 +66,7 @@
             <Hyperlink x:Name="GitHubHyperlink"
                        NavigateUri="https://github.com/gadams999/obrl/tree/main/wheel_overlay"
                        RequestNavigate="Hyperlink_RequestNavigate"
-                       Foreground="#4A9EFF">
+                       Foreground="{DynamicResource ThemeAccent}">
                 GitHub Repository
             </Hyperlink>
         </TextBlock>
@@ -74,7 +74,7 @@
         <!-- Copyright -->
         <TextBlock Grid.Row="5" 
                    FontSize="12"
-                   Foreground="#888888"
+                   Foreground="{DynamicResource ThemeSubtext}"
                    Margin="0,0,0,15">
             <Run Text="Copyright © 2025-2026 Gavin Adams &amp; Contributors"/>
             <LineBreak/>
@@ -89,9 +89,9 @@
                 Height="30"
                 Click="CloseButton_Click"
                 HorizontalAlignment="Center"
-                Background="#2D2D2D"
-                Foreground="White"
-                BorderBrush="#555555"
+                Background="{DynamicResource ThemeControlBackground}"
+                Foreground="{DynamicResource ThemeControlForeground}"
+                BorderBrush="{DynamicResource ThemeControlBorder}"
                 BorderThickness="1">
             <Button.Style>
                 <Style TargetType="Button">
@@ -108,14 +108,6 @@
                             </ControlTemplate>
                         </Setter.Value>
                     </Setter>
-                    <Style.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="#3D3D3D"/>
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="Background" Value="#4D4D4D"/>
-                        </Trigger>
-                    </Style.Triggers>
                 </Style>
             </Button.Style>
         </Button>

@@ -814,6 +814,53 @@ namespace WheelOverlay
 
             AddLabel("Move Overlay Opacity", "Overlay transparency when repositioning (0 = invisible, 100 = fully opaque)");
             _opacitySlider = AddSlider(0, 100, 10, _settings.MoveOverlayOpacity);
+
+            // --- Review or Reset Settings section ---
+            var separator = new Border
+            {
+                BorderThickness = new Thickness(0, 1, 0, 0),
+                Margin = new Thickness(0, 20, 0, 0)
+            };
+            separator.SetResourceReference(Border.BorderBrushProperty, "ThemeControlBorder");
+            _settingsPanel.Children.Add(separator);
+
+            var sectionLabel = new TextBlock
+            {
+                Text = "Review or Reset Settings",
+                FontSize = 16,
+                FontWeight = FontWeights.SemiBold,
+                Margin = new Thickness(0, 20, 0, 10)
+            };
+            sectionLabel.SetResourceReference(TextBlock.ForegroundProperty, "ThemeForeground");
+            _settingsPanel.Children.Add(sectionLabel);
+
+            var openFolderButton = new System.Windows.Controls.Button
+            {
+                Content = "Open Settings Folder",
+                Width = 180,
+                Margin = new Thickness(0, 0, 0, 8),
+                HorizontalAlignment = System.Windows.HorizontalAlignment.Left,
+                ToolTip = "Opens the folder containing your settings and log files in File Explorer"
+            };
+            openFolderButton.SetResourceReference(System.Windows.Controls.Control.BackgroundProperty, "ThemeControlBackground");
+            openFolderButton.SetResourceReference(System.Windows.Controls.Control.ForegroundProperty, "ThemeControlForeground");
+            openFolderButton.SetResourceReference(System.Windows.Controls.Control.BorderBrushProperty, "ThemeControlBorder");
+            openFolderButton.Click += OpenSettingsFolder_Click;
+            _settingsPanel.Children.Add(openFolderButton);
+
+            var resetButton = new System.Windows.Controls.Button
+            {
+                Content = "Reset to Defaults",
+                Width = 180,
+                Margin = new Thickness(0, 0, 0, 8),
+                HorizontalAlignment = System.Windows.HorizontalAlignment.Left,
+                ToolTip = "Deletes your settings file and restores all options to their default values"
+            };
+            resetButton.SetResourceReference(System.Windows.Controls.Control.BackgroundProperty, "ThemeControlBackground");
+            resetButton.SetResourceReference(System.Windows.Controls.Control.ForegroundProperty, "ThemeControlForeground");
+            resetButton.SetResourceReference(System.Windows.Controls.Control.BorderBrushProperty, "ThemeControlBorder");
+            resetButton.Click += ResetSettings_Click;
+            _settingsPanel.Children.Add(resetButton);
         }
 
         private void AddLabel(string text, string? tooltip = null)
@@ -1046,6 +1093,72 @@ namespace WheelOverlay
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        // --- Settings File Management ---
+
+        private void OpenSettingsFolder_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var directory = AppSettings.GetSettingsDirectory();
+                if (System.IO.Directory.Exists(directory))
+                {
+                    System.Diagnostics.Process.Start("explorer.exe", directory);
+                }
+                else
+                {
+                    System.Windows.MessageBox.Show(
+                        "Settings folder does not exist yet. It will be created when settings are first saved.",
+                        "Settings Folder",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                Services.LogService.Error("Failed to open settings folder", ex);
+            }
+        }
+
+        private void ResetSettings_Click(object sender, RoutedEventArgs e)
+        {
+            var result = System.Windows.MessageBox.Show(
+                "This will reset all settings to their default values.\n\nAre you sure?",
+                "Reset Settings",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (result != MessageBoxResult.Yes) return;
+
+            try
+            {
+                var settingsPath = AppSettings.GetSettingsPath();
+                if (System.IO.File.Exists(settingsPath))
+                {
+                    System.IO.File.Delete(settingsPath);
+                    Services.LogService.Info("Settings file deleted by user request (reset to defaults)");
+                }
+
+                // Reload fresh defaults
+                _settings = AppSettings.Load();
+                _settings.Save();
+
+                // Notify the main app so the overlay picks up the new settings
+                SettingsChanged?.Invoke(this, EventArgs.Empty);
+
+                // Close settings window — user can reopen to see defaults
+                Close();
+            }
+            catch (Exception ex)
+            {
+                Services.LogService.Error("Failed to reset settings", ex);
+                System.Windows.MessageBox.Show(
+                    "Failed to reset settings. You can manually delete the file from the settings folder.",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
         }
         
         // --- Conditional Visibility UI Methods (overlay-visibility-and-ui-improvements) ---
