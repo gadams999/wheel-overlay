@@ -35,35 +35,35 @@
 - [x] 4.5 Verify the knob graphic renders correctly at different overlay window sizes
 
 ## Task 5: Integrate Dial layout into MainWindow
-- [ ] 5.1 Add `DialTemplate` DataTemplate in `MainWindow.xaml` Window.Resources referencing `DialLayout` UserControl
-- [ ] 5.2 Add DataTrigger for `Layout=Dial` in the ContentControl style to switch to `DialTemplate`
+- [x] 5.1 Add `DialTemplate` DataTemplate in `MainWindow.xaml` Window.Resources referencing `DialLayout` UserControl
+- [x] 5.2 Add DataTrigger for `Layout=Dial` in the ContentControl style to switch to `DialTemplate`
 
 ## Task 6: Update SettingsWindow for Dial layout
-- [ ] 6.1 Ensure the layout mode dropdown in `SettingsWindow.xaml` includes the `Dial` option (it should auto-populate from the enum)
-- [ ] 6.2 Add visibility logic to hide grid-specific controls (rows, columns, suggested dimensions) when Dial layout is selected
-- [ ] 6.3 Add `IsGridLayoutSelected` (or equivalent) property to `SettingsViewModel` that returns true only for Grid layout
+- [x] 6.1 Ensure the layout mode dropdown in `SettingsWindow.xaml` includes the `Dial` option (it should auto-populate from the enum)
+- [x] 6.2 Add visibility logic to hide grid-specific controls (rows, columns, suggested dimensions) when Dial layout is selected
+- [x] 6.3 Add `IsGridLayoutSelected` (or equivalent) property to `SettingsViewModel` that returns true only for Grid layout
 
 ## Task 7: Create theme resource dictionaries
-- [ ] 7.1 Create `WheelOverlay/Resources/LightTheme.xaml` with named color resources: ThemeBackground, ThemeForeground, ThemeControlBackground, ThemeControlBorder, ThemeControlForeground, ThemeAccent, ThemeDropShadow
-- [ ] 7.2 Create `WheelOverlay/Resources/DarkTheme.xaml` with the same resource keys and dark mode color values
-- [ ] 7.3 Merge the initial theme resource dictionary (LightTheme) in `App.xaml` Application.Resources
+- [x] 7.1 Create `WheelOverlay/Resources/LightTheme.xaml` with named color resources: ThemeBackground, ThemeForeground, ThemeControlBackground, ThemeControlBorder, ThemeControlForeground, ThemeAccent, ThemeDropShadow
+- [x] 7.2 Create `WheelOverlay/Resources/DarkTheme.xaml` with the same resource keys and dark mode color values
+- [x] 7.3 Merge the initial theme resource dictionary (LightTheme) in `App.xaml` Application.Resources
 
 ## Task 8: Create ThemeService
-- [ ] 8.1 Create `WheelOverlay/Services/ThemeService.cs` implementing `IDisposable` with `ThemeChanged` event, `IsDarkMode` property, and `Preference` property
-- [ ] 8.2 Implement `DetectSystemTheme()` that reads `HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize\AppsUseLightTheme` registry key, defaulting to light mode on failure
-- [ ] 8.3 Implement `ApplyTheme(bool dark)` that swaps the theme resource dictionary in `Application.Current.Resources.MergedDictionaries`
-- [ ] 8.4 Implement `StartWatching()` using a polling timer (every 2 seconds) to detect system theme changes and fire `ThemeChanged` when preference is `System`
-- [ ] 8.5 Implement theme resolution logic: Light/Dark preference overrides system detection; System preference follows detected theme
+- [x] 8.1 Create `WheelOverlay/Services/ThemeService.cs` implementing `IDisposable` with `ThemeChanged` event, `IsDarkMode` property, and `Preference` property
+- [x] 8.2 Implement `DetectSystemTheme()` that reads `HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize\AppsUseLightTheme` registry key, defaulting to light mode on failure
+- [x] 8.3 Implement `ApplyTheme(bool dark)` that swaps the theme resource dictionary in `Application.Current.Resources.MergedDictionaries`
+- [x] 8.4 Implement `StartWatching()` using a polling timer (every 2 seconds) to detect system theme changes and fire `ThemeChanged` when preference is `System`
+- [x] 8.5 Implement theme resolution logic: Light/Dark preference overrides system detection; System preference follows detected theme
 
 ## Task 9: Integrate ThemeService into application lifecycle
-- [ ] 9.1 Initialize `ThemeService` in `App.xaml.cs` `OnStartup` with the persisted `ThemePreference` from loaded settings
-- [ ] 9.2 Subscribe to `ThemeChanged` event to update any open windows (SettingsWindow, AboutWindow)
-- [ ] 9.3 Dispose `ThemeService` in `CleanupResources`
+- [x] 9.1 Initialize `ThemeService` in `App.xaml.cs` `OnStartup` with the persisted `ThemePreference` from loaded settings
+- [x] 9.2 Subscribe to `ThemeChanged` event to update any open windows (SettingsWindow, AboutWindow)
+- [x] 9.3 Dispose `ThemeService` in `CleanupResources`
 
 ## Task 10: Theme the Settings Window
-- [ ] 10.1 Convert `SettingsWindow.xaml` hardcoded colors/styles to use `{DynamicResource ThemeBackground}`, `{DynamicResource ThemeForeground}`, etc.
-- [ ] 10.2 Add theme preference combo box (System Default / Light / Dark) to the Settings Window UI
-- [ ] 10.3 Bind theme preference combo to `AppSettings.ThemePreference` and trigger `ThemeService.Preference` update on Apply
+- [x] 10.1 Convert `SettingsWindow.xaml` hardcoded colors/styles to use `{DynamicResource ThemeBackground}`, `{DynamicResource ThemeForeground}`, etc.
+- [x] 10.2 Add theme preference combo box (System Default / Light / Dark) to the Settings Window UI
+- [x] 10.3 Bind theme preference combo to `AppSettings.ThemePreference` and trigger `ThemeService.Preference` update on Apply
 
 ## Task 11: Theme the About Window
 - [ ] 11.1 Convert `AboutWindow.xaml` hardcoded colors/styles to use `{DynamicResource}` theme resources

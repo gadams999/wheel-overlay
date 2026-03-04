@@ -24,6 +24,7 @@ namespace WheelOverlay.ViewModels
                 RefreshGridPreview();
                 RefreshSuggestedDimensions();
                 OnPropertyChanged(nameof(GridCapacityDisplay));
+                OnPropertyChanged(nameof(IsGridLayoutSelected));
             }
         }
         
@@ -57,6 +58,8 @@ namespace WheelOverlay.ViewModels
             set { _suggestedDimensions = value; OnPropertyChanged(); }
         }
         
+        public bool IsGridLayoutSelected => SelectedProfile?.Layout == DisplayLayout.Grid;
+
         public string GridCapacityDisplay
         {
             get

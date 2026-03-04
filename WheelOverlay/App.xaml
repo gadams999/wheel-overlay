@@ -4,6 +4,11 @@
              xmlns:cv="clr-namespace:WheelOverlay.Converters"
              ShutdownMode="OnExplicitShutdown">
     <Application.Resources>
-        <cv:IsSelectedConverter x:Key="IsSelectedConverter" />
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/LightTheme.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <cv:IsSelectedConverter x:Key="IsSelectedConverter" />
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

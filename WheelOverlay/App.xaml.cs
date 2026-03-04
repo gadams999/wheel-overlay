@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Forms;
 using Application = System.Windows.Application;
 using WheelOverlay.Models;
+using WheelOverlay.Services;
 
 namespace WheelOverlay
 {
@@ -23,6 +24,7 @@ namespace WheelOverlay
         private ToolStripMenuItem? _configModeMenuItem;
         private ToolStripMenuItem? _minimizeMenuItem;
         private ToolStripMenuItem? _minimizeActionMenuItem;
+        private ThemeService? _themeService;
 
         public App()
         {
@@ -79,6 +81,14 @@ namespace WheelOverlay
                 
                 // Add "Minimize" menu item (visible only when MinimizeToTaskbar setting is enabled)
                 var settings = AppSettings.Load();
+
+                // Initialize theme service with persisted preference
+                _themeService = new ThemeService(settings.ThemePreference);
+                _themeService.ApplyTheme(_themeService.IsDarkMode);
+                _themeService.StartWatching();
+                _themeService.ThemeChanged += OnThemeChanged;
+                Services.LogService.Info($"ThemeService initialized (preference={settings.ThemePreference}, dark={_themeService.IsDarkMode})");
+
                 _minimizeActionMenuItem = new ToolStripMenuItem("Minimize");
                 _minimizeActionMenuItem.Click += (s, args) => MinimizeToTaskbar();
                 _minimizeActionMenuItem.Visible = settings.MinimizeToTaskbar;
@@ -158,6 +168,12 @@ namespace WheelOverlay
                 
                 // Update minimize menu item visibility based on MinimizeToTaskbar setting
                 UpdateMinimizeMenuItemVisibility();
+
+                // Apply theme preference change to ThemeService
+                if (_themeService != null)
+                {
+                    _themeService.Preference = settings.ThemePreference;
+                }
             };
             _settingsWindow.Closed += (s, e) => _settingsWindow = null;
             _settingsWindow.Show();
@@ -276,6 +292,18 @@ namespace WheelOverlay
             CleanupResources();
         }
 
+        private void OnThemeChanged(object? sender, bool isDarkMode)
+        {
+            Services.LogService.Info($"Theme changed: dark={isDarkMode}");
+
+            // DynamicResource bindings in open windows update automatically
+            // when ThemeService.ApplyTheme swaps the resource dictionary.
+            // Invalidate visual state on open windows to ensure any non-dynamic
+            // elements refresh immediately.
+            _settingsWindow?.InvalidateVisual();
+            _aboutWindow?.InvalidateVisual();
+        }
+
         private void CleanupResources()
         {
             Services.LogService.Info("Cleaning up resources");
@@ -319,6 +347,22 @@ namespace WheelOverlay
                 Services.LogService.Error("Error closing main window", ex);
             }
             
+            // Dispose theme service
+            try
+            {
+                if (_themeService != null)
+                {
+                    Services.LogService.Info("Disposing ThemeService");
+                    _themeService.ThemeChanged -= OnThemeChanged;
+                    _themeService.Dispose();
+                    _themeService = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Services.LogService.Error("Error disposing ThemeService", ex);
+            }
+
             // Then cleanup notify icon
             CleanupNotifyIcon();
         }
