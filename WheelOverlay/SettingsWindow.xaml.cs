@@ -375,15 +375,7 @@ namespace WheelOverlay
             _viewModel!.SelectedProfile = currentProfile!;
             
             // --- Conditional Visibility Section (overlay-visibility-and-ui-improvements) ---
-            AddLabel("Conditional Visibility");
-            var visibilityHelp = new TextBlock 
-            { 
-                Text = "Show overlay only when this application is running:", 
-                FontSize = 11, 
-                Margin = new Thickness(0, 0, 0, 5) 
-            };
-            visibilityHelp.SetResourceReference(TextBlock.ForegroundProperty, "ThemeSubtext");
-            _settingsPanel.Children.Add(visibilityHelp);
+            AddLabel("Conditional Visibility", "Show overlay only when this application is running");
             
             var filePanel = new StackPanel 
             { 
@@ -422,8 +414,8 @@ namespace WheelOverlay
             _settingsPanel.Children.Add(filePanel);
             
             // --- NEW v0.5.0: Position Count Configuration ---
-            AddLabel("Number of Positions");
-            _positionCountComboBox = new System.Windows.Controls.ComboBox { Margin = new Thickness(0, 0, 0, 5) };
+            AddLabel("Number of Positions", "Configure how many positions your wheel has (2-20)");
+            _positionCountComboBox = new System.Windows.Controls.ComboBox { Margin = new Thickness(0, 0, 0, 15) };
             foreach (int count in _viewModel.AvailablePositionCounts)
             {
                 _positionCountComboBox.Items.Add(count);
@@ -431,15 +423,6 @@ namespace WheelOverlay
             _positionCountComboBox.SelectedItem = _viewModel.SelectedProfile.PositionCount;
             _positionCountComboBox.SelectionChanged += PositionCount_Changed;
             _settingsPanel.Children.Add(_positionCountComboBox);
-            
-            var positionCountHelp = new TextBlock 
-            { 
-                Text = "Configure how many positions your wheel has (2-20)", 
-                FontSize = 10, 
-                Margin = new Thickness(0, 2, 0, 10) 
-            };
-            positionCountHelp.SetResourceReference(TextBlock.ForegroundProperty, "ThemeSubtext");
-            _settingsPanel.Children.Add(positionCountHelp);
 
             // --- NEW v0.5.0: Grid Dimensions Configuration (wrapped for visibility toggle) ---
             _gridControlsPanel = new StackPanel();
@@ -634,47 +617,132 @@ namespace WheelOverlay
                 ? Visibility.Visible
                 : Visibility.Collapsed;
 
+            // Labeled separator: --- Dial Settings ---
+            var dialSepContainer = new Grid { Margin = new Thickness(0, 15, 0, 10) };
+            dialSepContainer.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            dialSepContainer.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            dialSepContainer.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+            var dialSepLeft = new Separator { VerticalAlignment = VerticalAlignment.Center };
+            dialSepLeft.SetResourceReference(Separator.BackgroundProperty, "ThemeControlBorder");
+            Grid.SetColumn(dialSepLeft, 0);
+
+            var dialSepText = new TextBlock { Text = "Dial Settings", FontSize = 12, Margin = new Thickness(10, 0, 10, 0) };
+            dialSepText.SetResourceReference(TextBlock.ForegroundProperty, "ThemeSubtext");
+            Grid.SetColumn(dialSepText, 1);
+
+            var dialSepRight = new Separator { VerticalAlignment = VerticalAlignment.Center };
+            dialSepRight.SetResourceReference(Separator.BackgroundProperty, "ThemeControlBorder");
+            Grid.SetColumn(dialSepRight, 2);
+
+            dialSepContainer.Children.Add(dialSepLeft);
+            dialSepContainer.Children.Add(dialSepText);
+            dialSepContainer.Children.Add(dialSepRight);
+            _dialControlsPanel.Children.Add(dialSepContainer);
+
             var dialKnobLabel = new TextBlock { Text = "Dial Knob Size", FontSize = 14, FontWeight = FontWeights.SemiBold, Margin = new Thickness(0, 10, 0, 5) };
             dialKnobLabel.SetResourceReference(TextBlock.ForegroundProperty, "ThemeForeground");
-            _dialControlsPanel.Children.Add(dialKnobLabel);
+            var dialKnobInfo = new Border
+            {
+                Width = 16,
+                Height = 16,
+                CornerRadius = new CornerRadius(8),
+                BorderThickness = new Thickness(1),
+                Margin = new Thickness(6, 10, 0, 5),
+                VerticalAlignment = VerticalAlignment.Center,
+                Cursor = System.Windows.Input.Cursors.Help,
+                Background = System.Windows.Media.Brushes.Transparent
+            };
+            dialKnobInfo.SetResourceReference(Border.BorderBrushProperty, "ThemeSubtext");
+            var dialKnobInfoText = new TextBlock
+            {
+                Text = "i",
+                FontSize = 10,
+                FontStyle = FontStyles.Italic,
+                HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            dialKnobInfoText.SetResourceReference(TextBlock.ForegroundProperty, "ThemeSubtext");
+            dialKnobInfo.Child = dialKnobInfoText;
+            ToolTipService.SetInitialShowDelay(dialKnobInfo, 0);
+            ToolTipService.SetShowDuration(dialKnobInfo, 30000);
+            dialKnobInfo.ToolTip = "Scale the knob graphic (1 = smallest, 10 = largest). Text stays the same size.";
+            var dialKnobLabelPanel = new StackPanel { Orientation = System.Windows.Controls.Orientation.Horizontal };
+            dialKnobLabelPanel.Children.Add(dialKnobLabel);
+            dialKnobLabelPanel.Children.Add(dialKnobInfo);
+            _dialControlsPanel.Children.Add(dialKnobLabelPanel);
             _dialKnobScaleSlider = AddSlider(1, 10, 0.5, Math.Round(currentProfile.DialKnobScale * 2) / 2);
             _dialKnobScaleSlider.IsSnapToTickEnabled = true;
             // AddSlider adds a wrapper panel to _settingsPanel — move it into _dialControlsPanel
             var knobSliderWrapper = (UIElement)_settingsPanel.Children[_settingsPanel.Children.Count - 1];
             _settingsPanel.Children.Remove(knobSliderWrapper);
             _dialControlsPanel.Children.Add(knobSliderWrapper);
-            var knobScaleHelp = new TextBlock
-            {
-                Text = "Scale the knob graphic (1 = smallest, 10 = largest). Text stays the same size.",
-                FontSize = 10,
-                Margin = new Thickness(0, 2, 0, 10)
-            };
-            knobScaleHelp.SetResourceReference(TextBlock.ForegroundProperty, "ThemeSubtext");
-            _dialControlsPanel.Children.Add(knobScaleHelp);
 
             var dialGapLabel = new TextBlock { Text = "Label Gap", FontSize = 14, FontWeight = FontWeights.SemiBold, Margin = new Thickness(0, 10, 0, 5) };
             dialGapLabel.SetResourceReference(TextBlock.ForegroundProperty, "ThemeForeground");
-            _dialControlsPanel.Children.Add(dialGapLabel);
+            var dialGapInfo = new Border
+            {
+                Width = 16,
+                Height = 16,
+                CornerRadius = new CornerRadius(8),
+                BorderThickness = new Thickness(1),
+                Margin = new Thickness(6, 10, 0, 5),
+                VerticalAlignment = VerticalAlignment.Center,
+                Cursor = System.Windows.Input.Cursors.Help,
+                Background = System.Windows.Media.Brushes.Transparent
+            };
+            dialGapInfo.SetResourceReference(Border.BorderBrushProperty, "ThemeSubtext");
+            var dialGapInfoText = new TextBlock
+            {
+                Text = "i",
+                FontSize = 10,
+                FontStyle = FontStyles.Italic,
+                HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            dialGapInfoText.SetResourceReference(TextBlock.ForegroundProperty, "ThemeSubtext");
+            dialGapInfo.Child = dialGapInfoText;
+            ToolTipService.SetInitialShowDelay(dialGapInfo, 0);
+            ToolTipService.SetShowDuration(dialGapInfo, 30000);
+            dialGapInfo.ToolTip = "Gap between cog edge and text (% of knob radius)";
+            var dialGapLabelPanel = new StackPanel { Orientation = System.Windows.Controls.Orientation.Horizontal };
+            dialGapLabelPanel.Children.Add(dialGapLabel);
+            dialGapLabelPanel.Children.Add(dialGapInfo);
+            _dialControlsPanel.Children.Add(dialGapLabelPanel);
             _dialLabelGapSlider = AddSlider(10, 20, 1, currentProfile.DialLabelGapPercent);
             _dialLabelGapSlider.IsSnapToTickEnabled = true;
             var gapSliderWrapper = (UIElement)_settingsPanel.Children[_settingsPanel.Children.Count - 1];
             _settingsPanel.Children.Remove(gapSliderWrapper);
             _dialControlsPanel.Children.Add(gapSliderWrapper);
-            var gapHelp = new TextBlock
-            {
-                Text = "Gap between cog edge and text (% of knob radius)",
-                FontSize = 10,
-                Margin = new Thickness(0, 2, 0, 10)
-            };
-            gapHelp.SetResourceReference(TextBlock.ForegroundProperty, "ThemeSubtext");
-            _dialControlsPanel.Children.Add(gapHelp);
             _settingsPanel.Children.Add(_dialControlsPanel);
 
             // --- 5. Font Size & Spacing ---
-            AddLabel("Font Size");
+            var fontSepContainer = new Grid { Margin = new Thickness(0, 15, 0, 10) };
+            fontSepContainer.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            fontSepContainer.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            fontSepContainer.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+            var fontSepLeft = new Separator { VerticalAlignment = VerticalAlignment.Center };
+            fontSepLeft.SetResourceReference(Separator.BackgroundProperty, "ThemeControlBorder");
+            Grid.SetColumn(fontSepLeft, 0);
+
+            var fontSepText = new TextBlock { Text = "Font Settings", FontSize = 12, Margin = new Thickness(10, 0, 10, 0) };
+            fontSepText.SetResourceReference(TextBlock.ForegroundProperty, "ThemeSubtext");
+            Grid.SetColumn(fontSepText, 1);
+
+            var fontSepRight = new Separator { VerticalAlignment = VerticalAlignment.Center };
+            fontSepRight.SetResourceReference(Separator.BackgroundProperty, "ThemeControlBorder");
+            Grid.SetColumn(fontSepRight, 2);
+
+            fontSepContainer.Children.Add(fontSepLeft);
+            fontSepContainer.Children.Add(fontSepText);
+            fontSepContainer.Children.Add(fontSepRight);
+            _settingsPanel.Children.Add(fontSepContainer);
+
+            AddLabel("Font Size", "Text size for overlay labels (10-80 pt)");
             _fontSizeSlider = AddSlider(10, 80, 1, _settings.FontSize);
 
-            AddLabel("Item Spacing (pixels)");
+            AddLabel("Item Spacing", "Space between items in pixels");
             _spacingSlider = AddSlider(0, 20, 1, _settings.ItemSpacing);
         }
 
@@ -744,17 +812,56 @@ namespace WheelOverlay
             title.SetResourceReference(TextBlock.ForegroundProperty, "ThemeForeground");
             _settingsPanel.Children.Add(title);
 
-            AddLabel("Move Overlay Opacity (%)");
+            AddLabel("Move Overlay Opacity", "Overlay transparency when repositioning (0 = invisible, 100 = fully opaque)");
             _opacitySlider = AddSlider(0, 100, 10, _settings.MoveOverlayOpacity);
         }
 
-        private void AddLabel(string text)
+        private void AddLabel(string text, string? tooltip = null)
         {
             if (_settingsPanel == null) return;
-            var label = new TextBlock { Text = text, FontWeight = FontWeights.Bold, Margin = new Thickness(0, 0, 0, 5) };
+
+            var container = new StackPanel { Orientation = System.Windows.Controls.Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 5) };
+
+            var label = new TextBlock { Text = text, FontSize = 14, FontWeight = FontWeights.SemiBold };
             label.SetResourceReference(TextBlock.ForegroundProperty, "ThemeForeground");
-            _settingsPanel.Children.Add(label);
+            container.Children.Add(label);
+
+            if (tooltip != null)
+            {
+                var infoBorder = new Border
+                {
+                    Width = 16,
+                    Height = 16,
+                    CornerRadius = new CornerRadius(8),
+                    BorderThickness = new Thickness(1),
+                    Margin = new Thickness(6, 0, 0, 0),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Cursor = System.Windows.Input.Cursors.Help,
+                    Background = System.Windows.Media.Brushes.Transparent
+                };
+                infoBorder.SetResourceReference(Border.BorderBrushProperty, "ThemeSubtext");
+
+                var infoText = new TextBlock
+                {
+                    Text = "i",
+                    FontSize = 10,
+                    FontStyle = FontStyles.Italic,
+                    HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+                infoText.SetResourceReference(TextBlock.ForegroundProperty, "ThemeSubtext");
+                infoBorder.Child = infoText;
+
+                ToolTipService.SetInitialShowDelay(infoBorder, 0);
+                ToolTipService.SetShowDuration(infoBorder, 30000);
+                infoBorder.ToolTip = tooltip;
+
+                container.Children.Add(infoBorder);
+            }
+
+            _settingsPanel.Children.Add(container);
         }
+
 
         private Slider AddSlider(double min, double max, double tickFreq, double value)
         {
