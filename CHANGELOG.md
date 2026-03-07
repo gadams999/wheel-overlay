@@ -5,6 +5,49 @@ All notable changes to Wheel Overlay will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2026-03-07
+
+> Feature release adding skeuomorphic dial layout, full dark/light mode theming, theme-aware icons, and rebranding from OBRL to Gavin Adams.
+
+### Added
+- **Dial Layout Mode**: New circular dial layout that mirrors the physical position arrangement of the Bavarian SimTec Alpha wheel
+  - Positions 1–4 arranged on the right arc (1 o'clock to 5 o'clock)
+  - Positions 5–8 arranged on the left arc (7 o'clock to 11 o'clock)
+  - Data-driven angle configuration via `DialPositionConfig` for easy adjustment
+  - Rotary knob SVG graphic centered in the dial
+  - Supports flash animation for empty positions, same as other layouts
+  - Equidistant label spacing with proper arrow-to-character alignment
+- **Dark Mode / Light Mode Theming**: Full theme support following Windows system appearance
+  - Detects Windows app mode via registry (`AppsUseLightTheme`) with polling for runtime changes
+  - Swappable WPF resource dictionaries (`LightTheme.xaml`, `DarkTheme.xaml`) for all theme colors
+  - Theme preference setting with three options: System Default, Light, Dark
+  - All open windows (overlay, settings, about) update automatically on theme change
+  - Settings window fully styled for both themes including all controls, buttons, and dropdowns
+- **Theme-Aware Icons**: System tray and window icons swap between light and dark variants based on active theme
+  - Dark theme uses light icons for visibility on dark taskbar, and vice versa
+  - About window displays theme-appropriate 256x256 wheel overlay graphic
+  - Window title bar, taskbar, and Alt+Tab icons all update on theme change
+- **Settings UX Improvements**: Replaced inline help text with tooltip info icons and added labeled section separators for cleaner layout
+- **Icon Generator Tooling**: Scripts and .NET console app to generate Windows icon PNGs from SVG source files
+  - Generates all standard Windows sizes (16x16 through 310x310 tiles)
+  - Light and dark variants from SVG sources
+- **Theme Resource Tests**: Unit tests verifying both `LightTheme.xaml` and `DarkTheme.xaml` contain all required resource keys
+- **ThemeService Tests**: Unit and property-based tests for theme detection, preference override, and runtime switching
+- **Dial Layout Tests**: Unit tests for `DialPositionConfig` angle distribution and property-based tests for position calculations
+- **Serialization Tests**: Property-based tests verifying `AppSettings` round-trip serialization with new `ThemePreference` and `Dial` enum values
+
+### Changed
+- **Branding**: Updated manufacturer from OBRL to Gavin Adams across installer (`Package.wxs`), registry keys, and all documentation
+- **About Window**: Updated GitHub URL to `gadams999/wheel-overlay`, replaced static icon with theme-aware variant
+- **Application Icon**: Replaced with new wheel overlay design (`wheel_overlay_dark.ico`)
+- **Settings Window**: Grid-specific controls (rows, columns) now hidden when Dial layout is selected
+- **Installer**: Moved installer files from `Package/` to `installer/` directory, removed bundled runtime files from repo
+- **Build Docs**: Updated `BUILD_COMMANDS.md` and `CI_CD_SETUP.md` with current paths and instructions
+
+### Fixed
+- **Dial Label Spacing**: Corrected equidistant positioning and arrow-to-character alignment on dial layout
+- **Version Tests**: Updated hardcoded version assertions from 0.5.5 to 0.6.0
+
 ## [0.5.5] - 2026-03-02
 
 > Baseline release for the new standalone repository. Includes CI/CD fixes, .NET 10 workflow alignment, and repo structure improvements.

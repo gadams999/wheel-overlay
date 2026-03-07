@@ -261,7 +261,18 @@ Contributions are welcome! See [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) for 
 
 ## Version History
 
-### v0.5.5 (Current)
+### v0.6.0 (Current)
+- Skeuomorphic dial layout mirroring the physical Bavarian SimTec Alpha wheel positions
+- Full dark mode / light mode theming with Windows system theme detection
+- Theme preference override (System Default, Light, Dark) in settings
+- Theme-aware system tray and window icons (light/dark variants)
+- Settings UX refresh with tooltip info icons and labeled section separators
+- Rebranded from OBRL to Gavin Adams across installer and documentation
+- Updated About window with new GitHub URL and theme-aware icon
+- Icon generator tooling for producing Windows icon PNGs from SVG sources
+- New test coverage for theming, dial layout, and settings serialization
+
+### v0.5.5
 - Standalone repository baseline (migrated from previous monorepo)
 - CI workflows updated to .NET 10.0.x and WiX 4.0.5
 - Repository structure reorganized (scripts/, docs/)
