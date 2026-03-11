@@ -11,9 +11,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OverlayCore.Tests", "tests\OverlayCore.Tests\OverlayCore.Tests.csproj", "{E350F96A-D06F-4072-811C-CD57CC896869}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WheelOverlay", "WheelOverlay\WheelOverlay.csproj", "{3584C009-3A26-4BF0-9226-885105FE13E0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WheelOverlay", "src\WheelOverlay\WheelOverlay.csproj", "{3584C009-3A26-4BF0-9226-885105FE13E0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WheelOverlay.Tests", "WheelOverlay.Tests\WheelOverlay.Tests.csproj", "{60445296-0302-4E07-ACBA-997F9986D92D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WheelOverlay.Tests", "tests\WheelOverlay.Tests\WheelOverlay.Tests.csproj", "{60445296-0302-4E07-ACBA-997F9986D92D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

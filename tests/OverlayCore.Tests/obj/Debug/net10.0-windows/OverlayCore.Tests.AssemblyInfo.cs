@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("OverlayCore.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0f73ff8e304d0c6fb2a071e74b05e1a4587efb4d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a88b0af0ecf62211466aff37bf5da247774ee585")]
 [assembly: System.Reflection.AssemblyProductAttribute("OverlayCore.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("OverlayCore.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

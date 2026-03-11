@@ -107,8 +107,8 @@ This plan restructures the WheelOverlay repository into the OpenDash-Overlays mo
 - [x] 4. Checkpoint - Verify OverlayCore builds and extracted service tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 5. Migrate WheelOverlay to reference OverlayCore
-  - [ ] 5.1 Update WheelOverlay project file and namespace
+- [x] 5. Migrate WheelOverlay to reference OverlayCore
+  - [x] 5.1 Update WheelOverlay project file and namespace
     - Move WheelOverlay source to `src/WheelOverlay/`
     - Update `WheelOverlay.csproj`: set `RootNamespace=OpenDash.WheelOverlay`, add `ProjectReference` to `../OverlayCore/OverlayCore.csproj`
     - Retain `Vortice.DirectInput` NuGet dependency
@@ -116,7 +116,7 @@ This plan restructures the WheelOverlay repository into the OpenDash-Overlays mo
     - Add WheelOverlay to the solution under the `src` solution folder
     - _Requirements: 3.1, 3.3, 3.4, 3.6, 8.2_
 
-  - [ ] 5.2 Update WheelOverlay namespaces and using directives
+  - [x] 5.2 Update WheelOverlay namespaces and using directives
     - Change all `namespace WheelOverlay.*` to `namespace OpenDash.WheelOverlay.*`
     - Add `using OpenDash.OverlayCore.Services;`, `using OpenDash.OverlayCore.Models;`, `using OpenDash.OverlayCore.Behaviors;` where needed
     - Remove duplicated code that has been extracted into OverlayCore (ThemeService, LogService, ProcessMonitor, WindowTransparencyHelper inline P/Invoke, ConfigModeBehavior inline logic, SystemTrayScaffold inline setup)
@@ -132,7 +132,7 @@ This plan restructures the WheelOverlay repository into the OpenDash-Overlays mo
     - Include `#if FAST_TESTS` directive for iteration count control
     - **Validates: Requirements 3.8**
 
-  - [ ] 5.4 Migrate WheelOverlay.Tests
+  - [x] 5.4 Migrate WheelOverlay.Tests
     - Move test project to `tests/WheelOverlay.Tests/`
     - Update `WheelOverlay.Tests.csproj` to reference WheelOverlay at new path
     - Update namespace references from `WheelOverlay.Services` to `OpenDash.OverlayCore.Services` for extracted services
