@@ -123,7 +123,7 @@ This plan restructures the WheelOverlay repository into the OpenDash-Overlays mo
     - Call `LogService.Initialize("WheelOverlay")` at startup to preserve `%APPDATA%\WheelOverlay\logs.txt` path
     - _Requirements: 3.2, 3.5, 3.7, 3.8, 8.2, 8.3_
 
-  - [ ]* 5.3 Write property test for AppSettings serialization (Property 4)
+  - [x] 5.3 Write property test for AppSettings serialization (Property 4)
     - **Property 4: AppSettings JSON serialization round-trip**
     - Generate random AppSettings with profiles, text labels, colors, layouts, theme preferences
     - Verify: serialize to JSON → deserialize back → equivalent object

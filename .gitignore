@@ -21,6 +21,10 @@ bld/
 [Ll]og/
 [Ll]ogs/
 
+# FastTests build configuration output
+**/bin/FastTests/
+**/obj/FastTests/
+
 # Publish output
 publish-test/
 Publish/
@@ -51,10 +55,8 @@ test_*
 *_test.*
 *.test.*
 test.*
-# But keep test project directories, source files, and Scripts
-!WheelOverlay.Tests/
-!**/*.Tests.*
-!**/Tests/**
+# But keep test project source files only
+!**/*.Tests.csproj
 !**/*Test*.cs
 !**/*Tests*.cs
 !scripts/*.ps1
