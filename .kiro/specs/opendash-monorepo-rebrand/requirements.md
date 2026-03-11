@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This feature restructures the existing WheelOverlay single-purpose repository into a monorepo called "OpenDash-Overlays." The restructuring extracts reusable overlay infrastructure (theme detection, logging, process monitoring, window transparency, config-mode drag, system tray scaffolding) into a shared class library called OverlayCore, while keeping WheelOverlay as the first overlay application. The monorepo supports independent versioning, per-app CI/CD pipelines with path filters, per-app MSI installers, and namespaced git tags. End users see independent applications and are unaware of the shared codebase. Additionally, the existing procedural SettingsWindow is refactored into a Material Design-inspired XAML-based settings framework in OverlayCore, with the About dialog integrated as a settings category. OverlayCore also bundles shared font resources and typography utilities for consistent styling across overlay applications. Tag-based CI/CD release triggers complement the existing path-filtered workflows, giving developers explicit control over when releases are published.
+This feature restructures the existing WheelOverlay single-purpose repository into a monorepo called "OpenDash-Overlays." The restructuring extracts reusable overlay infrastructure (theme detection, logging, process monitoring, window transparency, config-mode drag, system tray scaffolding) into a shared class library called OverlayCore, while keeping WheelOverlay as the first overlay application. The monorepo supports independent versioning, per-app CI/CD pipelines with path filters, per-app MSI installers, and namespaced git tags. End users see independent applications and are unaware of the shared codebase. Additionally, the existing procedural SettingsWindow is refactored into a Material Design-inspired XAML-based settings framework in OverlayCore, with the About dialog integrated as a settings category. OverlayCore also bundles shared font resources and typography utilities for consistent styling across overlay applications. Tag-based CI/CD release triggers complement the existing path-filtered workflows, giving developers explicit control over when releases are published. User-facing documentation covering usage guides, tips, and how-to content is created and published for each overlay application, starting with WheelOverlay. A global Alt+F6 hotkey is handled in OverlayCore to cycle overlay windows between normal overlay mode and positioning mode, allowing all overlay applications to inherit the mode-cycling behavior.
 
 ## Glossary
 
@@ -23,6 +23,10 @@ This feature restructures the existing WheelOverlay single-purpose repository in
 - **MaterialDesignSettings**: A XAML-based settings framework in OverlayCore using Material Design-inspired styles, providing a tabbed/categorized settings UI that overlay apps extend with their own settings panels
 - **SharedFontResources**: Font resource dictionaries and utilities bundled in OverlayCore for consistent typography across overlay applications
 - **Tag_Trigger**: A GitHub Actions workflow trigger that fires when a git tag matching a specific pattern is pushed to the repository
+- **UserDocumentation**: Published Markdown-based usage guides, tips, how-to content, and troubleshooting information for each overlay application, stored in the `docs/` directory
+- **GlobalHotkey**: A system-wide keyboard shortcut registered via Win32 RegisterHotKey that functions regardless of which application currently has focus
+- **OverlayMode**: The normal operating state of an overlay window where the window is topmost, click-through, and displaying its content
+- **PositioningMode**: The state where an overlay window disables click-through transparency and enables ConfigModeBehavior drag-to-reposition, allowing the user to move the overlay
 
 ## Requirements
 
@@ -224,3 +228,32 @@ This feature restructures the existing WheelOverlay single-purpose repository in
 5. THE Tag_Trigger SHALL coexist with the existing Path_Filter triggers so that releases can be initiated by either a merge to main with matching path changes or by pushing a namespaced tag
 6. THE tag format SHALL follow the convention `{app-name}/v{major}.{minor}.{patch}` using hyphenated app names (e.g., `wheel-overlay`, `discord-notify`)
 7. WHEN a Tag_Trigger initiates a release, THE release workflow SHALL execute the same build, test, and packaging steps as a Path_Filter-initiated release
+
+### Requirement 15: User Documentation for Overlay Applications
+
+**User Story:** As an end user, I want published documentation covering usage guides, tips, and how-to content for each overlay application, so that I can learn how to set up, configure, and get the most out of the overlays without guessing.
+
+#### Acceptance Criteria
+
+1. THE UserDocumentation SHALL be created and published for each overlay application, starting with WheelOverlay
+2. THE UserDocumentation SHALL include a getting-started guide covering installation, first launch, and initial configuration for WheelOverlay
+3. THE UserDocumentation SHALL include usage guides explaining each layout type (Single, Vertical, Horizontal, Grid, Dial), profile management, and theme configuration in WheelOverlay
+4. THE UserDocumentation SHALL include tips and best-practices content for optimizing overlay positioning, readability, and performance during sim racing sessions
+5. THE UserDocumentation SHALL include a troubleshooting section covering common issues such as the overlay not appearing, DirectInput device not detected, and settings not saving
+6. WHEN a new overlay application is added to the monorepo, THE UserDocumentation SHALL be extended with a dedicated section for the new overlay application
+7. THE UserDocumentation SHALL be stored in a `docs/` directory at the repository root, organized by overlay application (e.g., `docs/wheel-overlay/`)
+8. THE UserDocumentation SHALL be written in Markdown format suitable for publishing via GitHub Pages or a similar static site generator
+
+### Requirement 16: Keybind for Cycling Overlay Modes
+
+**User Story:** As an end user, I want a keyboard shortcut to toggle between overlay mode and positioning mode, so that I can quickly reposition the overlay without navigating the system tray menu.
+
+#### Acceptance Criteria
+
+1. WHEN the user presses Alt+F6, THE OverlayCore SHALL cycle the active overlay window between overlay mode and positioning mode
+2. WHILE the overlay is in overlay mode, THE OverlayCore SHALL display the overlay in its normal click-through, topmost state
+3. WHILE the overlay is in positioning mode, THE OverlayCore SHALL disable click-through transparency and enable the ConfigModeBehavior drag-to-reposition pattern
+4. WHEN the overlay transitions from positioning mode back to overlay mode via Alt+F6, THE OverlayCore SHALL confirm the current position (equivalent to pressing Enter in ConfigModeBehavior)
+5. THE OverlayCore SHALL register Alt+F6 as a global hotkey so that the keybind functions regardless of which application has focus
+6. IF the Alt+F6 hotkey registration fails because another application has reserved the key combination, THEN THE OverlayCore SHALL log a descriptive error and continue operating without the hotkey
+7. THE OverlayCore SHALL expose the keybind through a shared service so that all overlay applications inherit the mode-cycling behavior without additional configuration
