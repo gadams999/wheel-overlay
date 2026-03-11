@@ -38,15 +38,15 @@ This plan restructures the WheelOverlay repository into the OpenDash-Overlays mo
 - [x] 2. Checkpoint - Verify solution structure
   - Ensure `dotnet build` succeeds from the repository root with the new solution file. Ask the user if questions arise.
 
-- [ ] 3. Extract shared services into OverlayCore
-  - [ ] 3.1 Extract ThemeService to OverlayCore
+- [x] 3. Extract shared services into OverlayCore
+  - [x] 3.1 Extract ThemeService to OverlayCore
     - Move ThemeService to `src/OverlayCore/Services/ThemeService.cs` under namespace `OpenDash.OverlayCore.Services`
     - Move `ThemePreference` enum to `src/OverlayCore/Models/ThemePreference.cs` under namespace `OpenDash.OverlayCore.Models`
     - Move `DarkTheme.xaml` and `LightTheme.xaml` to `src/OverlayCore/Resources/`
     - Update theme resource dictionary URIs to use pack URIs referencing OverlayCore assembly: `pack://application:,,,/OverlayCore;component/Resources/DarkTheme.xaml`
     - _Requirements: 2.2, 2.9, 2.10, 3.7, 8.1_
 
-  - [ ]* 3.2 Write property test for ThemeService (Property 1)
+  - [x] 3.2 Write property test for ThemeService (Property 1)
     - **Property 1: Theme preference resolution is deterministic**
     - Generate random `ThemePreference` values and boolean system theme states
     - Verify: Light → false, Dark → true, System → matches system state
@@ -54,13 +54,13 @@ This plan restructures the WheelOverlay repository into the OpenDash-Overlays mo
     - Include `#if FAST_TESTS` directive for iteration count control
     - **Validates: Requirements 2.2**
 
-  - [ ] 3.3 Extract LogService to OverlayCore
+  - [x] 3.3 Extract LogService to OverlayCore
     - Move LogService to `src/OverlayCore/Services/LogService.cs` under namespace `OpenDash.OverlayCore.Services`
     - Parameterize the log path by app name via `Initialize(string appName)` method
     - Log files stored at `%APPDATA%/{appName}/logs.txt`
     - _Requirements: 2.3, 2.10_
 
-  - [ ]* 3.4 Write property test for LogService (Property 2)
+  - [x] 3.4 Write property test for LogService (Property 2)
     - **Property 2: Log file never exceeds 1 MB plus one message**
     - Generate random strings of varying lengths as log messages
     - Verify log file size ≤ 1 MB + length of most recent message after each write
@@ -68,12 +68,12 @@ This plan restructures the WheelOverlay repository into the OpenDash-Overlays mo
     - Include `#if FAST_TESTS` directive for iteration count control
     - **Validates: Requirements 2.3**
 
-  - [ ] 3.5 Extract ProcessMonitor to OverlayCore
+  - [x] 3.5 Extract ProcessMonitor to OverlayCore
     - Move ProcessMonitor to `src/OverlayCore/Services/ProcessMonitor.cs` under namespace `OpenDash.OverlayCore.Services`
     - API unchanged: `TargetApplicationStateChanged` event, `Start()`, `Stop()`, `UpdateTarget()`, `Dispose()`
     - _Requirements: 2.4, 2.10_
 
-  - [ ]* 3.6 Write property test for ProcessMonitor (Property 3)
+  - [x] 3.6 Write property test for ProcessMonitor (Property 3)
     - **Property 3: Process matching is consistent with path and filename rules**
     - Generate random file paths and process names with case variations
     - Verify: match by full path (case-insensitive) OR by filename (case-insensitive), else false
@@ -81,30 +81,30 @@ This plan restructures the WheelOverlay repository into the OpenDash-Overlays mo
     - Include `#if FAST_TESTS` directive for iteration count control
     - **Validates: Requirements 2.4**
 
-  - [ ] 3.7 Extract WindowTransparencyHelper to OverlayCore
+  - [x] 3.7 Extract WindowTransparencyHelper to OverlayCore
     - Create `src/OverlayCore/Services/WindowTransparencyHelper.cs` under namespace `OpenDash.OverlayCore.Services`
     - Consolidate Win32 interop (GetWindowLong, SetWindowLong, WS_EX_TRANSPARENT) from MainWindow.xaml.cs
     - Provide `MakeClickThrough()`, `RemoveClickThrough()`, `IsClickThrough()` static methods
     - _Requirements: 2.5, 2.10_
 
-  - [ ] 3.8 Extract ConfigModeBehavior to OverlayCore
+  - [x] 3.8 Extract ConfigModeBehavior to OverlayCore
     - Create `src/OverlayCore/Behaviors/ConfigModeBehavior.cs` under namespace `OpenDash.OverlayCore.Behaviors`
     - Implement Enter-to-confirm / Escape-to-cancel overlay repositioning pattern
     - Store original position on `Enter()`, enable drag, apply semi-transparent background
     - `Exit(true)` saves position; `Exit(false)` restores original
     - _Requirements: 2.6, 2.10_
 
-  - [ ] 3.9 Extract BaseOverlayWindow to OverlayCore
+  - [x] 3.9 Extract BaseOverlayWindow to OverlayCore
     - Create `src/OverlayCore/Behaviors/BaseOverlayWindow.cs` under namespace `OpenDash.OverlayCore.Behaviors`
     - Provide `ApplyOverlayDefaults(Window)` static method: Topmost, no taskbar, transparent background, SizeToContent, AllowsTransparency
     - _Requirements: 2.7, 2.10_
 
-  - [ ] 3.10 Extract SystemTrayScaffold to OverlayCore
+  - [x] 3.10 Extract SystemTrayScaffold to OverlayCore
     - Create `src/OverlayCore/Services/SystemTrayScaffold.cs` under namespace `OpenDash.OverlayCore.Services`
     - Provide reusable NotifyIcon setup: constructor with tooltip and icon, `SetContextMenu()`, `ShowBalloonTip()`, `Dispose()`
     - _Requirements: 2.8, 2.10_
 
-- [ ] 4. Checkpoint - Verify OverlayCore builds and extracted service tests pass
+- [x] 4. Checkpoint - Verify OverlayCore builds and extracted service tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 5. Migrate WheelOverlay to reference OverlayCore
@@ -168,7 +168,7 @@ This plan restructures the WheelOverlay repository into the OpenDash-Overlays mo
     - **Validates: Requirements 2.6, 16.1, 16.4**
 
 - [ ] 8. Implement Settings UI framework
-  - [ ] 8.1 Create ISettingsCategory interface and MaterialSettingsWindow in OverlayCore
+  - [ ] 8.1 Create ISettingsCategory interface and use https://github.com/MaterialDesignInXAML/MaterialDesignInXamlToolkit MaterialSettingsWindow in OverlayCore
     - Create `src/OverlayCore/Settings/ISettingsCategory.cs` with `CategoryName`, `SortOrder`, `CreateContent()`, `SaveValues()`, `LoadValues()`
     - Create `src/OverlayCore/Settings/MaterialSettingsWindow.xaml` and `.xaml.cs` with left-side navigation list and right-side content area
     - Create `src/OverlayCore/Settings/Styles/MaterialStyles.xaml` with Material Design-inspired styles (rounded corners, elevation shadows, accent colors, smooth transitions)
