@@ -15,6 +15,14 @@
 
 ---
 
+## Phase 0: Version Bump *(first commit — Constitution §III)*
+
+**Purpose**: Version bump MUST be the first commit on the branch before any implementation begins.
+
+- [x] T000 Bump WheelOverlay version to `0.7.0` in `src/WheelOverlay/WheelOverlay.csproj` — set all three required properties: `<Version>0.7.0</Version>`, `<AssemblyVersion>0.7.0.0</AssemblyVersion>`, `<FileVersion>0.7.0.0</FileVersion>`; commit as `chore(wheel-overlay): bump version to 0.7.0`; this commit MUST precede all other implementation commits on this branch
+
+---
+
 ## Phase 1: Setup
 
 **Purpose**: Remove scaffolding and update shared tooling before any user story work begins.
@@ -31,7 +39,7 @@
 
 **⚠️ CRITICAL**: US3 (font migration) and US5 (settings UI) cannot begin until this phase is complete.
 
-- [ ] T004 [P] Create `src/OverlayCore/Resources/Fonts/SharedFontResources.xaml` — XAML ResourceDictionary defining keys: `OverlayFontFamily` (Segoe UI), `MonospaceFontFamily` (Consolas), `OverlayFontSizeSmall` (12.0), `OverlayFontSizeMedium` (16.0), `OverlayFontSizeLarge` (20.0), `OverlayFontSizeXLarge` (28.0), `OverlayFontWeightNormal` (Normal), `OverlayFontWeightBold` (Bold); per `contracts/SharedFontResources.md`
+- [ ] T004 [P] Create `src/OverlayCore/Resources/Fonts/SharedFontResources.xaml` — XAML ResourceDictionary defining keys: `OverlayFontFamily` (Segoe UI), `RobotoFontFamily` (Roboto), `MonospaceFontFamily` (Consolas), `OverlayFontSizeSmall` (12.0), `OverlayFontSizeMedium` (16.0), `OverlayFontSizeLarge` (20.0), `OverlayFontSizeXLarge` (28.0), `OverlayFontWeightNormal` (Normal), `OverlayFontWeightBold` (Bold); embed the Roboto font file(s) in `src/OverlayCore/Resources/Fonts/` as `<Resource>` build action so the pack URI resolves correctly; per `contracts/SharedFontResources.md` and FR-025
 - [ ] T005 [P] Create `src/OverlayCore/Resources/Fonts/FontUtilities.cs` — static class `OpenDash.OverlayCore.Resources.Fonts.FontUtilities` with `GetFontFamily(string? familyName) → FontFamily` (Segoe UI fallback, never null) and `ToFontWeight(string? weightName) → FontWeight` (Normal fallback for null/empty/unrecognized input); per `contracts/SharedFontResources.md`
 - [ ] T006 Write property test P8 in `tests/OverlayCore.Tests/FontUtilitiesPropertyTests.cs` — comment: `// Feature: OpenDash Monorepo Rebrand, Property 8: FontUtilities returns valid results for all string inputs`; use `#if FAST_TESTS` (10 iterations) / `#else` (100 iterations); property: `GetFontFamily(anyString)` → non-null `FontFamily`; property: `ToFontWeight(validWeightName)` → correct `FontWeight`; verify Segoe UI and Normal fallbacks for null/empty/unrecognized inputs; depends on T005
 
@@ -69,7 +77,7 @@
 - [ ] T013 [P] [US2] Update `scripts/wheel-overlay/build_msi.ps1` — replace all references to old root-relative `WheelOverlay\WheelOverlay.csproj` with `src\WheelOverlay\WheelOverlay.csproj`; update installer source from `.\installer` to `.\installers\wheel-overlay`; confirm `$ErrorActionPreference = "Stop"` present
 - [ ] T014 [P] [US2] Update `scripts/wheel-overlay/build_release.ps1` — same path corrections as T013: `src\WheelOverlay\WheelOverlay.csproj`, updated publish and output paths; confirm `$ErrorActionPreference = "Stop"` present
 - [ ] T015 [P] [US2] Update `scripts/wheel-overlay/generate_components.ps1` — update input path to WheelOverlay publish output under `src\WheelOverlay\`; update WiX components output file path to `installers\wheel-overlay\Components.wxs`
-- [ ] T016 [US2] Create `installers/wheel-overlay/Package.wxs` — WiX 4 package definition; `<Package>` with generated GUID, version from `WheelOverlay.csproj`, manufacturer "Gavin Adams"; `<StandardDirectory>` targeting `ProgramFilesFolder`; `<Directory>` `OpenDash\WheelOverlay`; `<Feature>` referencing all component groups from `Components.wxs`; Start Menu and Desktop shortcuts; icon reference
+- [ ] T016 [US2] Create `installers/wheel-overlay/Package.wxs` — WiX 4 package definition; `<Package>` with `ProductCode="*"` (auto-generated per build) and a **fixed, stable** `UpgradeCode` GUID (generate once with `[System.Guid]::NewGuid()` and hard-code it — MUST NOT change across versions, per NFR-002); version from `WheelOverlay.csproj`, manufacturer "Gavin Adams"; `<StandardDirectory>` targeting `ProgramFilesFolder`; `<Directory>` `OpenDash\WheelOverlay`; `<Feature>` referencing all component groups from `Components.wxs`; Start Menu and Desktop shortcuts; icon reference; `<MajorUpgrade DowngradeErrorMessage="..."/>` to enforce in-place upgrade and block downgrades
 - [ ] T017 [US2] Create `installers/wheel-overlay/CustomUI.wxs` — WiX 4 minimal UI extension (WixUI_Minimal bootstrapper or equivalent) supporting simple install/uninstall flow; WiX 4 syntax (not WiX 3 `<Product>`)
 
 **Checkpoint**: `wheel-overlay-release.yml` path filters correctly isolate WheelOverlay from other apps; version validation step fails with clear error on mismatch; `release.yml` deleted; build scripts reference `src/WheelOverlay/`; WiX files present and `build_msi.ps1` succeeds locally
@@ -158,6 +166,7 @@
 
 **Purpose**: Final validation, documentation updates, and release readiness across all user stories.
 
+- [ ] T044a [P] Verify NFR-001 performance — with WheelOverlay running in overlay mode (no sim process detected), idle for 60 seconds; observe CPU and Working Set via `Get-Process WheelOverlay | Select-Object CPU, WorkingSet64` or Task Manager; assert CPU usage < 2% and Working Set < 50 MB; document actual readings as a comment on this task and add them to a `## Performance` subsection in `docs/wheel-overlay/troubleshooting.md` (alongside T043 content)
 - [ ] T044 [P] Update `README.md` — add "Repository Structure" section with monorepo directory layout table (src/, tests/, installers/, scripts/, docs/, assets/); add "Adding a New Overlay App" section referencing `specs/001-opendash-monorepo-rebrand/quickstart.md`; add "Applications" subsection listing WheelOverlay v0.7.0 with brief description; update "Version History" summary for this feature's changes; preserve all existing installation and usage instructions
 - [ ] T045 [P] Update `CHANGELOG.md` — add entries under `[Unreleased]` per Keep a Changelog format: Added (Alt+F6 global hotkey for overlay repositioning, modern settings window with side navigation, About section in settings window, shared font resources for consistent typography, WheelOverlay user documentation, contributing guide documenting conventions); Changed (settings window redesigned with category-registration pattern); Removed (separate About dialog — now integrated into settings window)
 - [ ] T046 Run `scripts/Validate-PropertyTests.ps1 -TestProjectPath tests/WheelOverlay.Tests` and `scripts/Validate-PropertyTests.ps1 -TestProjectPath tests/OverlayCore.Tests` — confirm both pass with no missing `#if FAST_TESTS` directives; depends on T003
@@ -170,7 +179,8 @@
 
 ### Phase Dependencies
 
-- **Phase 1 (Setup)**: No dependencies — start immediately; T001 ‖ T002; T003 after
+- **Phase 0 (Version Bump)**: No dependencies — T000 MUST be first commit on branch
+- **Phase 1 (Setup)**: After Phase 0 — T001 ‖ T002; T003 after
 - **Phase 2 (Foundational)**: After Phase 1 — T004 ‖ T005 → T006
 - **Phase 3 (US1)**: After Phase 1 — T007 ‖ T008 → T009
 - **Phase 4 (US2)**: After Phase 1 — T010 → T011 → T012; T013 ‖ T014 ‖ T015; T016 → T017
@@ -192,6 +202,8 @@
 ### Parallel Execution Map
 
 ```
+Phase 0:  T000  (first commit — version bump)
+
 Phase 1:  T001 ‖ T002  →  T003
 
 Phase 2:  T004 ‖ T005  →  T006

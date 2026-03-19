@@ -10,10 +10,18 @@
 ### Session 2026-03-18
 
 - Q: Is there a target for overlay resource usage during sim racing sessions? → A: <2% CPU, <50MB RAM at idle.
-- Q: What is the canonical branch naming convention to document in FR-031? → A: `{issue-number}-{kebab-case-description}` (e.g., `001-opendash-monorepo-rebrand`).
-- Q: Should the settings UI framework in OverlayCore be a concrete shared WPF Window or an interface/base pattern? → A: OverlayCore contains a concrete `SettingsWindow` (WPF Window) with side-nav chrome; apps register `ISettingsCategory` panels at startup.
+- Q: What is the canonical branch naming convention to document in FR-031? → A: `<type>/<description>` per Constitution §VI (e.g., `feat/add-overlay-repositioning`). The current branch `001-opendash-monorepo-rebrand` is a justified bootstrapping deviation documented in plan.md Complexity Tracking.
+- Q: Should the settings UI framework in OverlayCore be a concrete shared WPF Window or an interface/base pattern? → A: OverlayCore contains a concrete `MaterialSettingsWindow` (WPF Window) with side-nav chrome; apps register `ISettingsCategory` panels at startup.
 - Q: What concretely satisfies "only the pipeline structure to support discord-notify needs to be established"? → A: A placeholder `.github/workflows/discord-notify-release.yml` with path filters and a namespaced tag trigger (`discord-notify/vX.Y.Z`). No app source code under `src/` is required.
 - Q: Does "overlay mode cycling" imply exactly two modes (Normal ↔ Positioning) or more? → A: Two modes for now (Normal ↔ Positioning), but the cycling API in OverlayCore must be designed to support additional modes in the future without breaking changes.
+
+### Session 2026-03-19
+
+- Q: What members must `ISettingsCategory` expose? → A: `string CategoryName`, `int SortOrder`, `FrameworkElement CreateContent()`, `void SaveValues()`, `void LoadValues()` — factory model; `SettingsWindow` calls `CreateContent()` on demand, `LoadValues()` when navigating to a category, and `SaveValues()` on all categories when the user clicks OK or Apply.
+- Q: Who is responsible for persisting each category's settings on Save? → A: `ISettingsCategory` exposes `void SaveValues()` and `void LoadValues()`; `MaterialSettingsWindow` coordinates — calling `LoadValues()` when navigating to a category, `SaveValues()` on the outgoing category when navigating away, and `SaveValues()` on all registered categories on OK/Apply. Cancel discards without calling `SaveValues()`. Each category encapsulates its own persistence logic.
+- Q: How should the MSI installer handle an existing WheelOverlay installation? → A: In-place upgrade — same `UpgradeCode` across all versions; MSI replaces binaries atomically, APPDATA settings survive untouched.
+- Q: Does a change to `src/OverlayCore/` trigger PR checks for all overlay apps or only OverlayCore itself? → A: OverlayCore changes trigger PR checks for all overlay apps that depend on it, in addition to OverlayCore's own checks.
+- Q: What must the shared typography resource in OverlayCore contain? → A: Existing WheelOverlay font definitions (family, sizes, weights) extracted into a shared `ResourceDictionary`, plus the Roboto font family. No other new fonts.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -154,12 +162,12 @@ A new WheelOverlay user has installed the app but is unsure how to configure it 
 
 - **FR-014**: Each overlay application MUST have a dedicated release pipeline that triggers only when files relevant to that application change
 - **FR-015**: Release pipelines MUST support two trigger mechanisms: automatic triggers on relevant file changes to the main branch, and explicit triggers via namespaced version tags
-- **FR-016**: Pull request validation pipelines MUST run for all source and test paths across the monorepo
+- **FR-016**: Pull request validation pipelines MUST run for all source and test paths across the monorepo. A change to `src/OverlayCore/` MUST trigger PR checks for every overlay application that depends on it (in addition to OverlayCore's own checks), since OverlayCore is consumed as source and a change there can break any downstream app.
 - **FR-017**: Property-based tests MUST run with a reduced iteration count on pull requests and full iteration count on release builds
 
 **Settings UI Framework**
 
-- **FR-018**: The shared `SettingsWindow` in OverlayCore MUST present settings organized into named categories accessible via a side navigation list. Overlay applications populate the window by registering `ISettingsCategory` implementations at startup; no per-app WPF window duplication is permitted.
+- **FR-018**: The shared `SettingsWindow` in OverlayCore MUST present settings organized into named categories accessible via a side navigation list. Overlay applications populate the window by registering `ISettingsCategory` implementations at startup; no per-app WPF window duplication is permitted. `ISettingsCategory` MUST expose exactly five members: `string CategoryName` (display label in the nav list), `int SortOrder` (ascending sort order; lower value = higher position), `FrameworkElement CreateContent()` (factory method called by `SettingsWindow` on demand to create the category's content panel), `void LoadValues()` (called by `SettingsWindow` when the user navigates to the category), and `void SaveValues()` (called by `SettingsWindow` on the outgoing category when the user navigates away, and on all registered categories when the user clicks OK or Apply). The About category is always present and always last (highest `SortOrder` value).
 - **FR-019**: The settings window MUST include an About category displaying the application version and a link to the project repository
 - **FR-020**: The About category MUST replace the existing separate About dialog — there MUST NOT be two separate About surfaces
 - **FR-021**: The settings window MUST support keyboard navigation across all categories and controls
@@ -172,7 +180,7 @@ A new WheelOverlay user has installed the app but is unsure how to configure it 
 
 **Shared Visual Resources**
 
-- **FR-025**: A shared set of typography definitions MUST be available for all overlay applications to consume, ensuring consistent font usage without per-app duplication
+- **FR-025**: A shared `ResourceDictionary` of typography definitions MUST be available in OverlayCore for all overlay applications to consume. It MUST include the Roboto font family plus all font families, sizes, and weights currently defined locally in WheelOverlay — extracted without modification. No additional fonts beyond these are in scope.
 - **FR-026**: WheelOverlay MUST replace its local font definitions with references to the shared typography resources
 
 **User Documentation**
@@ -184,13 +192,13 @@ A new WheelOverlay user has installed the app but is unsure how to configure it 
 **Developer Documentation**
 
 - **FR-030**: The repository README MUST describe the monorepo structure, build instructions, directory layout, and how to add a new overlay application
-- **FR-031**: A contributing guide MUST document the branch naming convention (`{issue-number}-{kebab-case-description}`), versioning approach, and release tag format
+- **FR-031**: A contributing guide MUST document the branch naming convention (`<type>/<description>` per Constitution §VI; valid prefixes: `feat/`, `fix/`, `docs/`, `test/`, `refactor/`, `chore/`, `perf/`), versioning approach, and release tag format
 
 ### Key Entities
 
 - **Overlay Application**: A standalone application that displays an always-on-top, click-through information overlay. Has its own version, installer, release pipeline, settings, and documentation. Depends on OverlayCore for shared behavior.
 - **Shared Infrastructure (OverlayCore)**: A library containing services shared across all overlay applications — theme detection, logging, process monitoring, window transparency management, system tray scaffolding, settings UI framework, and typography resources. Not independently versioned.
-- **Settings Category**: A named panel of related settings that an overlay application registers with the shared settings window by implementing `ISettingsCategory`. Displayed in a side navigation list sorted by priority. The About category is always present and always last.
+- **Settings Category**: A named panel of related settings that an overlay application registers with the shared settings window by implementing `ISettingsCategory`. The interface exposes `string CategoryName`, `int SortOrder` (ascending; lower = higher in nav list), `FrameworkElement CreateContent()` (factory method; called by `SettingsWindow` on demand), `void LoadValues()` (called on navigation to the category), and `void SaveValues()` (called on the outgoing category on navigation and on all categories on OK/Apply). Displayed in a side navigation list sorted ascending by `SortOrder`. The About category is always present and always last (highest `SortOrder` value).
 - **Overlay Mode**: The normal operating state where the overlay is always on top, click-through, and displaying its content. One of exactly two modes in the initial implementation; the cycling API is extensible for future modes.
 - **Positioning Mode**: A temporary state where the overlay is draggable by the user, with click-through disabled, allowing repositioning. Exiting this mode saves the position.
 - **Release Tag**: A namespaced git tag in the format `{app-name}/vX.Y.Z` that explicitly triggers a release pipeline for a specific overlay application.
@@ -198,6 +206,7 @@ A new WheelOverlay user has installed the app but is unsure how to configure it 
 ## Non-Functional Requirements
 
 - **NFR-001**: Each overlay application MUST consume less than 2% CPU and less than 50MB RAM while idle (overlay visible, no user interaction, no active sim racing process detected)
+- **NFR-002**: The WheelOverlay MSI installer MUST use a fixed `UpgradeCode` (consistent across all versions) so that installing a new version performs an in-place upgrade — replacing application binaries without touching user files in `%APPDATA%\WheelOverlay\`. This directly satisfies SC-004 (zero reconfigure prompts on upgrade).
 
 ## Success Criteria *(mandatory)*
 
