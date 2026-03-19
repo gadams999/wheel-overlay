@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+
+  <Fragment>
+    <!-- Minimal install/uninstall UI using WixUI_Minimal -->
+    <ui:WixUI Id="WixUI_Minimal" />
+
+    <!-- Override default license dialog to accept automatically (no separate RTF required) -->
+    <UIRef Id="WixUI_Minimal" />
+  </Fragment>
+
+</Wix>

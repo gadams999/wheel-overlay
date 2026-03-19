@@ -36,8 +36,8 @@ namespace OpenDash.WheelOverlay.Tests
             // Act
             var version = VersionInfo.Version;
 
-            // Assert - Version should be 0.6.0 based on current AssemblyVersion
-            Assert.Equal("0.6.0", version);
+            // Assert - Version should be 0.7.0 based on current AssemblyVersion
+            Assert.Equal("0.7.0", version);
         }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace OpenDash.WheelOverlay.Tests
             var fullVersionString = VersionInfo.GetFullVersionString();
 
             // Assert
-            Assert.Equal("Wheel Overlay v0.6.0", fullVersionString);
+            Assert.Equal("Wheel Overlay v0.7.0", fullVersionString);
         }
 
         /// <summary>
