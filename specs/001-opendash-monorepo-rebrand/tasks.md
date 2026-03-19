@@ -92,13 +92,13 @@
 
 ### Implementation for User Story 3
 
-- [ ] T018 [US3] Merge `SharedFontResources.xaml` into `src/WheelOverlay/App.xaml` — add `<ResourceDictionary Source="pack://application:,,,/OverlayCore;component/Resources/Fonts/SharedFontResources.xaml"/>` as first entry in `App.xaml` `MergedDictionaries`; preserve existing DarkTheme.xaml / LightTheme.xaml merges ordered after SharedFontResources; depends on T004
-- [ ] T019 [P] [US3] Replace local font definitions in `src/WheelOverlay/Views/DialLayout.xaml` — substitute hardcoded `FontFamily`, `FontSize`, `FontWeight` attribute literals with `{StaticResource OverlayFontFamily}`, `{StaticResource OverlayFontSizeLarge}`, etc.; preserve runtime bindings that read from `AppSettings.FontFamily`/`AppSettings.FontSize` (resolved via `FontUtilities.GetFontFamily()`, not static keys); depends on T018
-- [ ] T020 [P] [US3] Replace local font definitions in `src/WheelOverlay/Views/SingleTextLayout.xaml` — same substitution as T019; depends on T018
-- [ ] T021 [P] [US3] Replace local font definitions in `src/WheelOverlay/Views/VerticalLayout.xaml` — same substitution as T019; depends on T018
-- [ ] T022 [P] [US3] Replace local font definitions in `src/WheelOverlay/Views/HorizontalLayout.xaml` — same substitution as T019; depends on T018
-- [ ] T023 [P] [US3] Replace local font definitions in `src/WheelOverlay/Views/GridLayout.xaml` — same substitution as T019; depends on T018
-- [ ] T024 [US3] Run `dotnet test --configuration FastTests` and confirm all existing `WheelOverlay.Tests` and `OverlayCore.Tests` pass after font migration; fix any XAML resource lookup failures before proceeding; depends on T019–T023
+- [x] T018 [US3] Merge `SharedFontResources.xaml` into `src/WheelOverlay/App.xaml` — add `<ResourceDictionary Source="pack://application:,,,/OverlayCore;component/Resources/Fonts/SharedFontResources.xaml"/>` as first entry in `App.xaml` `MergedDictionaries`; preserve existing DarkTheme.xaml / LightTheme.xaml merges ordered after SharedFontResources; depends on T004
+- [x] T019 [P] [US3] Replace local font definitions in `src/WheelOverlay/Views/DialLayout.xaml` — substitute hardcoded `FontFamily`, `FontSize`, `FontWeight` attribute literals with `{StaticResource OverlayFontFamily}`, `{StaticResource OverlayFontSizeLarge}`, etc.; preserve runtime bindings that read from `AppSettings.FontFamily`/`AppSettings.FontSize` (resolved via `FontUtilities.GetFontFamily()`, not static keys); depends on T018
+- [x] T020 [P] [US3] Replace local font definitions in `src/WheelOverlay/Views/SingleTextLayout.xaml` — same substitution as T019; depends on T018
+- [x] T021 [P] [US3] Replace local font definitions in `src/WheelOverlay/Views/VerticalLayout.xaml` — same substitution as T019; depends on T018
+- [x] T022 [P] [US3] Replace local font definitions in `src/WheelOverlay/Views/HorizontalLayout.xaml` — same substitution as T019; depends on T018
+- [x] T023 [P] [US3] Replace local font definitions in `src/WheelOverlay/Views/GridLayout.xaml` — same substitution as T019; depends on T018
+- [x] T024 [US3] Run `dotnet test --configuration FastTests` and confirm all existing `WheelOverlay.Tests` and `OverlayCore.Tests` pass after font migration; fix any XAML resource lookup failures before proceeding; depends on T019–T023
 
 **Checkpoint**: `dotnet test --configuration FastTests` fully green; all 5 layout views render with shared font keys; settings.json round-trip unchanged (serialization invariant Property 4 still passes)
 
