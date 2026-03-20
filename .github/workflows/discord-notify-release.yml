@@ -7,7 +7,6 @@ on:
       - 'src/DiscordNotify/**'
       - 'src/OverlayCore/**'
       - 'tests/DiscordNotify.Tests/**'
-  push:
     tags:
       - 'discord-notify/v*'
 

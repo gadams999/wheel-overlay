@@ -63,7 +63,10 @@ jobs:
         dotnet-version: 10.0.x
 
     - name: Install WiX Toolset v4.0.5
-      run: dotnet tool install --global wix --version 4.0.5
+      run: |
+        dotnet tool install --global wix --version 4.0.5
+        wix extension add WixToolset.UI.wixext/4.0.5
+      shell: pwsh
 
     - name: Parse version from .csproj
       id: get_version
