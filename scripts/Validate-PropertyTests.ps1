@@ -11,15 +11,20 @@
     
     Returns exit code 0 if all property tests are valid, exit code 1 if any are missing directives.
 
-.PARAMETER TestPath
-    Path to the test directory. Defaults to WheelOverlay.Tests relative to script location.
+.PARAMETER TestProjectPath
+    Path to the test project directory, relative to the repository root or absolute.
+    Defaults to tests/WheelOverlay.Tests relative to the repository root.
 
 .PARAMETER Quiet
     Suppress detailed output, only show summary and errors.
 
 .EXAMPLE
     .\Validate-PropertyTests.ps1
-    Validate all property tests and show detailed results.
+    Validate WheelOverlay.Tests property tests and show detailed results.
+
+.EXAMPLE
+    .\Validate-PropertyTests.ps1 -TestProjectPath tests/OverlayCore.Tests
+    Validate OverlayCore.Tests property tests.
 
 .EXAMPLE
     .\Validate-PropertyTests.ps1 -Quiet
@@ -33,8 +38,8 @@
 [CmdletBinding()]
 param(
     [Parameter()]
-    [string]$TestPath,
-    
+    [string]$TestProjectPath,
+
     [Parameter()]
     [switch]$Quiet
 )
@@ -44,10 +49,18 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 # Determine test directory path
-if (-not $TestPath) {
-    $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-    $TestPath = Join-Path (Split-Path -Parent $scriptDir) "WheelOverlay.Tests"
+if (-not $TestProjectPath) {
+    $TestProjectPath = "tests/WheelOverlay.Tests"
 }
+
+# Resolve relative paths against repository root (parent of the scripts/ directory)
+if (-not [System.IO.Path]::IsPathRooted($TestProjectPath)) {
+    $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+    $repoRoot = Split-Path -Parent $scriptDir
+    $TestProjectPath = Join-Path $repoRoot $TestProjectPath
+}
+
+$TestPath = $TestProjectPath
 
 if (-not (Test-Path $TestPath)) {
     Write-Error "Test directory not found: $TestPath"

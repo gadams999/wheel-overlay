@@ -1,0 +1,21 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- Font Families -->
+    <FontFamily x:Key="OverlayFontFamily">Segoe UI</FontFamily>
+    <FontFamily x:Key="MonospaceFontFamily">Consolas</FontFamily>
+
+    <!-- Font Sizes -->
+    <sys:Double x:Key="OverlayFontSizeSmall">12</sys:Double>
+    <sys:Double x:Key="OverlayFontSizeMedium">16</sys:Double>
+    <sys:Double x:Key="OverlayFontSizeLarge">20</sys:Double>
+    <sys:Double x:Key="OverlayFontSizeXLarge">28</sys:Double>
+
+    <!-- Font Weights: FontWeight structs cannot be defined as XAML resource dictionary entries
+         and reliably resolved cross-assembly via StaticResource. Consumers should use
+         FontWeight="Bold" / FontWeight="Normal" attribute syntax (TypeConverter handles it),
+         or {x:Static FontWeights.Bold} inline. -->
+    <!-- OverlayFontWeightNormal = Normal, OverlayFontWeightBold = Bold -->
+
+</ResourceDictionary>

@@ -1,9 +1,25 @@
 # Changelog
 
-All notable changes to Wheel Overlay will be documented in this file.
+All notable changes to OpenDash Overlays will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+### Added
+- **Alt+F6 Global Hotkey**: Press Alt+F6 at any time to enter overlay repositioning mode; falls back gracefully to system tray "Configure overlay position" if the hotkey is already claimed by another application
+- **Modern Settings Window**: Redesigned settings window with side-navigation category layout; categories register via the `MaterialSettingsWindow.RegisterCategory` pattern from OverlayCore
+- **About Section in Settings**: Application information (version, GitHub link, acknowledgements) now lives as a dedicated category inside the settings window
+- **Shared Font Resources**: `OverlayCore` provides `SharedFontResources.xaml` for consistent Open Sans typography across all overlay apps
+- **WheelOverlay User Documentation**: Four-part guide covering installation, usage, tips, and troubleshooting (`docs/wheel-overlay/`)
+- **Contributing Guide**: `docs/CONTRIBUTING.md` documents monorepo conventions, branch naming, version bump rules, and property-test requirements
+
+### Changed
+- **Settings Window**: Redesigned with category-registration pattern; each concern (Display, Appearance, About) is a self-contained category class registered at startup
+
+### Removed
+- **Separate About Dialog**: The standalone About window has been removed; About information is now an integrated category in the settings window
 
 ## [0.6.0] - 2026-03-07
 

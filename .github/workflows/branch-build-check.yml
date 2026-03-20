@@ -1,10 +1,21 @@
-﻿name: Branch Build Check
+name: Branch Build Check
 
 on:
   push:
     branches-ignore:
       - main
-      - develop
+    paths:
+      - 'src/**'
+      - 'tests/**'
+      - 'scripts/**'
+      - '.github/workflows/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'tests/**'
+      - 'scripts/**'
+      - '.github/workflows/**'
 
 permissions:
   contents: read
@@ -24,16 +35,25 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
 
+    - name: Validate WheelOverlay property test directives
+      run: |
+        .\scripts\Validate-PropertyTests.ps1 -TestProjectPath tests/WheelOverlay.Tests
+      shell: pwsh
+
+    - name: Validate OverlayCore property test directives
+      run: |
+        .\scripts\Validate-PropertyTests.ps1 -TestProjectPath tests/OverlayCore.Tests
+      shell: pwsh
+
     - name: Build
       run: |
         Write-Host "Building project..."
-        dotnet build --no-restore --configuration Debug
+        dotnet build --no-restore --configuration FastTests src/WheelOverlay/WheelOverlay.csproj
       shell: pwsh
 
     - name: Run Fast Tests (10 iterations)
       run: |
         Write-Host "Running fast test suite with 10 iterations per property test..."
-        $env:FAST_TESTS = "true"
-        dotnet test --no-build --verbosity normal --configuration Debug
+        dotnet test --no-build --verbosity normal --configuration FastTests
         Write-Host "Fast tests passed - branch is buildable"
       shell: pwsh

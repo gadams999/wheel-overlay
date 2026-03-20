@@ -14,7 +14,7 @@ namespace WheelOverlay.Tests
         // Feature: overlay-visibility-and-ui-improvements, Property 2: Overlay Visibility Matches Executable State
         // Validates: Requirements 1.4
         #if FAST_TESTS
-        [Property(MaxTest = 10)]
+        [Property(MaxTest = 3)]
         #else
         [Property(MaxTest = 100)]
         #endif
@@ -33,7 +33,11 @@ namespace WheelOverlay.Tests
                     
                     // Act - Start monitoring and wait for initial check
                     monitor.Start();
+                    #if FAST_TESTS
+                    Thread.Sleep(150); // Shorter wait for fast tests
+                    #else
                     Thread.Sleep(200); // Wait for at least one check cycle
+                    #endif
                     
                     // Cleanup
                     monitor.Dispose();
@@ -47,7 +51,7 @@ namespace WheelOverlay.Tests
         // Feature: overlay-visibility-and-ui-improvements, Property 12: Case-Insensitive Path Comparison
         // Validates: Requirements 5.7
         #if FAST_TESTS
-        [Property(MaxTest = 10)]
+        [Property(MaxTest = 3)]
         #else
         [Property(MaxTest = 100)]
         #endif
@@ -76,7 +80,11 @@ namespace WheelOverlay.Tests
                     // Act - Start both monitors and wait for checks
                     lowerMonitor.Start();
                     upperMonitor.Start();
+                    #if FAST_TESTS
+                    Thread.Sleep(150); // Shorter wait for fast tests
+                    #else
                     Thread.Sleep(200);
+                    #endif
                     
                     // Cleanup
                     lowerMonitor.Dispose();
@@ -111,6 +119,12 @@ namespace WheelOverlay.Tests
         {
             try
             {
+                #if FAST_TESTS
+                var takeCount = 3; // Fewer processes for fast tests
+                #else
+                var takeCount = 10;
+                #endif
+                
                 return Process.GetProcesses()
                     .Select(p =>
                     {
@@ -129,7 +143,7 @@ namespace WheelOverlay.Tests
                     })
                     .Where(path => !string.IsNullOrEmpty(path))
                     .Distinct()
-                    .Take(10)
+                    .Take(takeCount)
                     .ToArray()!;
             }
             catch

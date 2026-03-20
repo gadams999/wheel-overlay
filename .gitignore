@@ -1,6 +1,9 @@
 # Kiro IDE files - track steering, specs, and settings
 # Exclude only transient/cache files if any appear later
 
+# Claude Code local settings and memory (machine-specific)
+.claude/
+
 # Temporary working notes
 temp/
 
@@ -20,6 +23,10 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
+
+# FastTests build configuration output
+**/bin/FastTests/
+**/obj/FastTests/
 
 # Publish output
 publish-test/
@@ -51,10 +58,8 @@ test_*
 *_test.*
 *.test.*
 test.*
-# But keep test project directories, source files, and Scripts
-!WheelOverlay.Tests/
-!**/*.Tests.*
-!**/Tests/**
+# But keep test project source files only
+!**/*.Tests.csproj
 !**/*Test*.cs
 !**/*Tests*.cs
 !scripts/*.ps1

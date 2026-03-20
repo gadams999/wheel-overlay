@@ -1,0 +1,54 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>OpenDash.WheelOverlay</RootNamespace>
+    <Version>0.7.0</Version>
+    <AssemblyVersion>0.7.0.0</AssemblyVersion>
+    <FileVersion>0.7.0.0</FileVersion>
+    <StartupObject>OpenDash.WheelOverlay.Program</StartupObject>
+    <!-- Fix for SingleFile crash (likely DirectInput native DLLs) -->
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+    <ApplicationIcon>app.ico</ApplicationIcon>
+    <Authors>Gavin Adams</Authors>
+    <Company>Gavin Adams</Company>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OverlayCore\OverlayCore.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Vortice.DirectInput" Version="3.8.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="app.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\assets\icons\wheel_overlay_light.ico" Link="tray_icon_light.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\assets\icons\wheel_overlay_dark.ico" Link="tray_icon_dark.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\assets\icons\generated\wheel_overlay_light_256x256.png" Link="about_icon_light.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\assets\icons\generated\wheel_overlay_dark_256x256.png" Link="about_icon_dark.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.WindowsDesktop.App.WindowsForms" />
+  </ItemGroup>
+
+</Project>

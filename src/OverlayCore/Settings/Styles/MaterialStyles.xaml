@@ -1,0 +1,66 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- ================================================================ -->
+    <!-- MaterialSettingsWindow — side-navigation ListBox style           -->
+    <!-- ================================================================ -->
+
+    <!-- ListBox for the left navigation panel -->
+    <Style x:Key="NavListBoxStyle" TargetType="ListBox">
+        <Setter Property="Width" Value="180"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{DynamicResource ThemeForeground}"/>
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Hidden"/>
+        <Setter Property="KeyboardNavigation.DirectionalNavigation" Value="Contained"/>
+    </Style>
+
+    <!-- ListBoxItem for the left navigation panel -->
+    <Style x:Key="NavListBoxItemStyle" TargetType="ListBoxItem">
+        <Setter Property="Padding" Value="12,8"/>
+        <Setter Property="Margin" Value="4,2"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBoxItem">
+                    <Border x:Name="ItemBorder"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            CornerRadius="4"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="ItemBorder" Property="Background"
+                                    Value="{DynamicResource ThemeControlBackground}"/>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="ItemBorder" Property="Background"
+                                    Value="{DynamicResource ThemeAccent}"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Content area border (right panel) -->
+    <Style x:Key="ContentBorderStyle" TargetType="Border">
+        <Setter Property="Background" Value="{DynamicResource ThemeBackground}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="0"/>
+    </Style>
+
+    <!-- Settings Window style -->
+    <Style x:Key="MaterialSettingsWindowStyle" TargetType="Window">
+        <Setter Property="MinWidth" Value="680"/>
+        <Setter Property="MinHeight" Value="480"/>
+        <Setter Property="Background" Value="{DynamicResource ThemeBackground}"/>
+        <Setter Property="WindowStartupLocation" Value="CenterScreen"/>
+    </Style>
+
+</ResourceDictionary>

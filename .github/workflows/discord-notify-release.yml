@@ -1,0 +1,24 @@
+name: DiscordNotify Release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/DiscordNotify/**'
+      - 'src/OverlayCore/**'
+      - 'tests/DiscordNotify.Tests/**'
+  push:
+    tags:
+      - 'discord-notify/v*'
+
+permissions:
+  contents: read
+
+jobs:
+  placeholder:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Placeholder pipeline
+        run: |
+          echo "discord-notify placeholder pipeline — no source implemented yet"
+          exit 0
