@@ -124,10 +124,12 @@ The Alt+F6 hotkey is registered globally at startup. If another application (suc
 
 Wheel Overlay is designed to stay within these limits while running in overlay mode with no sim process detected:
 
-| Metric | Target |
-|---|---|
-| CPU usage | < 2% |
-| Working Set (RAM) | < 50 MB |
+| Metric | Target | Measured (v0.7.0, idle 60 s) |
+|---|---|---|
+| CPU usage | < 2% | ~0% |
+| Private Working Set (RAM) | < 50 MB | ~32 MB |
+
+> **Note**: Task Manager's "Memory" column shows Private Working Set. The total Working Set column (~108 MB) includes shared .NET runtime and WPF framework pages mapped by Windows — this memory is not exclusively owned by Wheel Overlay.
 
 ### How to check
 

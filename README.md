@@ -1,4 +1,38 @@
-# Wheel Overlay
+# OpenDash Overlays
+
+A monorepo of transparent overlay applications for sim racing peripherals. Each app targets a specific device or use case and shares a common infrastructure layer ([OverlayCore](src/OverlayCore/)).
+
+## Applications
+
+| Application | Version | Description |
+|---|---|---|
+| **WheelOverlay** | v0.7.0 | Displays text labels on-screen that follow a rotary encoder's position (e.g., BavarianSimTec Alpha). Supports multiple layouts, global hotkey repositioning, and a modern settings window. |
+
+## Repository Structure
+
+| Directory | Contents |
+|---|---|
+| `src/` | Application and shared library source code |
+| `src/OverlayCore/` | Shared class library (ThemeService, LogService, GlobalHotkeyService, MaterialSettingsWindow, shared font resources) |
+| `src/WheelOverlay/` | WheelOverlay application (v0.7.0) |
+| `tests/` | xUnit + FsCheck property-based tests |
+| `tests/OverlayCore.Tests/` | Tests for shared services |
+| `tests/WheelOverlay.Tests/` | Tests for WheelOverlay |
+| `installers/` | WiX 4 MSI installer projects |
+| `installers/wheel-overlay/` | WheelOverlay MSI installer |
+| `scripts/` | Shared and per-app build/validation scripts |
+| `scripts/wheel-overlay/` | WheelOverlay build and release scripts |
+| `docs/` | User and developer documentation |
+| `docs/wheel-overlay/` | WheelOverlay user documentation |
+| `assets/` | Shared icons and images |
+
+## Adding a New Overlay App
+
+See [`specs/001-opendash-monorepo-rebrand/quickstart.md`](specs/001-opendash-monorepo-rebrand/quickstart.md) for the complete 10-step guide to adding a new overlay application to the monorepo.
+
+---
+
+## WheelOverlay
 
 A transparent overlay application for sim racing wheels (e.g., BavarianSimTec Alpha). It displays telemetry or arbitrary text labels on your screen based on the position of a rotary encoder. Useful as another indicator for the encoder's position (MAP, TC1, TC2, etc.) and when paired with [OpenKneeboard](https://openkneeboard.com/), provides the information within VR.
 
@@ -261,7 +295,16 @@ Contributions are welcome! See [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) for 
 
 ## Version History
 
-### v0.6.0 (Current)
+### v0.7.0 (Current)
+- Monorepo rebrand: OpenDash Overlays (multi-app structure with shared OverlayCore library)
+- Alt+F6 global hotkey for overlay repositioning (falls back to system tray menu if hotkey claimed)
+- Modern settings window with side-navigation category layout
+- About section integrated into settings window (separate About dialog removed)
+- Shared font resources in OverlayCore for consistent typography across apps
+- User documentation: getting-started, usage-guide, tips, troubleshooting
+- Contributing guide documenting monorepo conventions
+
+### v0.6.0
 - Skeuomorphic dial layout mirroring the physical Bavarian SimTec Alpha wheel positions
 - Full dark mode / light mode theming with Windows system theme detection
 - Theme preference override (System Default, Light, Dark) in settings

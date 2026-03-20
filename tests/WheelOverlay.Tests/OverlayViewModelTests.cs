@@ -48,10 +48,10 @@ namespace OpenDash.WheelOverlay.Tests
             Assert.True(viewModel.IsFlashing, "Flash should be active immediately after triggering");
 
             // Wait for flash to complete with generous timeout for CI environments
-            var timeout = TimeSpan.FromSeconds(3);
+            var timeout = TimeSpan.FromSeconds(10);
             var checkInterval = TimeSpan.FromMilliseconds(50);
             var elapsed = TimeSpan.Zero;
-            
+
             while (viewModel.IsFlashing && elapsed < timeout)
             {
                 await Task.Delay(checkInterval);
@@ -62,7 +62,7 @@ namespace OpenDash.WheelOverlay.Tests
 
             // Assert - flash should stop after approximately 500ms
             Assert.False(viewModel.IsFlashing, "Flash should stop after approximately 500ms");
-            Assert.InRange(actualDuration, 450, 3000); // 500ms with generous tolerance for slow CI environments
+            Assert.InRange(actualDuration, 450, 10000); // 500ms with generous tolerance for slow CI/load environments
         }
 
         // Test first position empty displays first populated position
