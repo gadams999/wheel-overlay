@@ -15,7 +15,7 @@
     <!-- Fix for SingleFile crash (likely DirectInput native DLLs) -->
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
-    <ApplicationIcon>app.ico</ApplicationIcon>
+    <ApplicationIcon>..\..\assets\wheel-overlay\app.ico</ApplicationIcon>
     <Authors>Gavin Adams</Authors>
     <Company>Gavin Adams</Company>
   </PropertyGroup>
@@ -29,7 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="app.ico" />
+    <Resource Include="..\..\assets\wheel-overlay\app.ico" Link="app.ico" />
   </ItemGroup>
 
   <ItemGroup>
