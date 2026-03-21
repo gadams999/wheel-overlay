@@ -631,9 +631,19 @@ namespace OpenDash.WheelOverlay.Tests
                     {
                         // For 7+ items, aspect ratio should be reasonably maintained
                         // Use a more flexible tolerance that accounts for mathematical constraints
-                        // Especially for extreme aspect ratios (very tall or very wide grids)
+
+                        // For 1-row or 1-column grids, condensing always tracks item count directly;
+                        // no meaningful aspect ratio can be preserved — just verify capacity.
+                        if (profile.GridColumns == 1 || profile.GridRows == 1)
+                        {
+                            bool hasCapacity = effectiveRows * effectiveColumns >= populatedCount;
+                            return hasCapacity
+                                .Label($"Single-dimension grid {profile.GridRows}×{profile.GridColumns} condensed to " +
+                                       $"{effectiveRows}×{effectiveColumns} should fit {populatedCount} items");
+                        }
+
                         double tolerance;
-                        
+
                         // For extreme aspect ratios (>3.0 or <0.33), use higher tolerance
                         if (configuredAspectRatio > 3.0 || configuredAspectRatio < 0.33)
                         {
@@ -647,7 +657,7 @@ namespace OpenDash.WheelOverlay.Tests
                         {
                             tolerance = 1.0; // Increased from 0.5 to handle grid constraints
                         }
-                        
+
                         return (aspectRatioDifference <= tolerance)
                             .Label($"Configured aspect ratio {configuredAspectRatio:F2} ({profile.GridRows}×{profile.GridColumns}), " +
                                    $"effective aspect ratio {effectiveAspectRatio:F2} ({effectiveRows}×{effectiveColumns}), " +
