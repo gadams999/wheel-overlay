@@ -1,6 +1,6 @@
 # Feature Specification: Material Design Settings Window
 
-**Feature Branch**: `overlay-core/v0.1.0`
+**Feature Branch**: `wheel-overlay/v0.7.0`
 **Created**: 2026-03-20
 **Status**: Draft
 **Input**: Refactor the WheelOverlay settings window (built in 001 phase 7) to use MaterialDesignInXamlToolkit instead of hand-rolled native WPF styles
@@ -15,7 +15,7 @@ The structural contract (`ISettingsCategory`, `MaterialSettingsWindow`, category
 
 ### User Story 1 — Settings Window Looks and Feels Like a Native Material Design App (Priority: P1)
 
-A user opens the WheelOverlay settings window from the system tray. Instead of the basic styled-from-scratch window they see today, the window presents a genuine Material Design experience: a navigation rail or drawer on the left with properly elevated category items, ripple effects on interaction, Material-themed typography, and accent-coloured selected state — matching the quality of any modern Material Design desktop application.
+A user opens the WheelOverlay settings window from the system tray. Instead of the basic styled-from-scratch window they see today, the window presents a genuine Material Design experience: a navigation rail on the left with properly elevated category items, ripple effects on interaction, Material-themed typography, and accent-coloured selected state — matching the quality of any modern Material Design desktop application.
 
 **Why this priority**: This is the core deliverable. Without it, the feature has no value. All other stories depend on the window chrome being upgraded first.
 
@@ -92,13 +92,13 @@ A user who has previously saved their display layout, font preferences, colours,
 
 **Design System Integration**
 
-- **FR-001**: The shared settings infrastructure in OverlayCore MUST use MaterialDesignInXamlToolkit as its design system for all settings window visual components
+- **FR-001**: The shared settings infrastructure in OverlayCore MUST use MaterialDesignInXamlToolkit (MD2 style set) as its design system for all settings window visual components
 - **FR-002**: The MaterialDesignInXamlToolkit dependency MUST be declared in OverlayCore only — individual overlay applications MUST NOT need to reference it directly to benefit from Material Design-styled settings
 - **FR-003**: MaterialDesignInXamlToolkit theme resource dictionaries MUST be merged at the OverlayCore level so they are available to all settings category content panels without per-category setup
 
 **Window Chrome**
 
-- **FR-004**: The settings window navigation panel MUST use a Material Design-styled list component with ripple interaction feedback and accent-coloured selected state
+- **FR-004**: The settings window navigation panel MUST use a Material Design **Navigation Rail** component with ripple interaction feedback and accent-coloured selected state — not a collapsible navigation drawer
 - **FR-005**: The settings window action buttons (OK, Apply, Cancel) MUST use Material Design button components appropriate to their action weight (primary action vs secondary/dismissal)
 - **FR-006**: The settings window layout and surface colours MUST use Material Design elevation and colour system rather than hardcoded brush values
 
@@ -149,5 +149,13 @@ A user who has previously saved their display layout, font preferences, colours,
 - The `ISettingsCategory` structural contract from `001-opendash-monorepo-rebrand` is treated as stable and will not be modified as part of this feature
 - WheelOverlay's existing `DarkTheme.xaml` and `LightTheme.xaml` remain the source of truth for which theme is active; this feature maps that choice to MaterialDesignInXamlToolkit's palette system rather than replacing the theme mechanism
 - The Roboto font already embedded in OverlayCore (from `001` phase 2) satisfies MaterialDesignInXamlToolkit's typography requirements — no additional font embedding is needed
-- Version target: the most recent stable release of MaterialDesignInXamlToolkit compatible with .NET 10 / WPF
+- Version target: the exact latest stable release of MaterialDesignInXamlToolkit compatible with .NET 10 / WPF at the time of implementation, pinned as a fixed version number in `OverlayCore.csproj` — floating version ranges are not permitted; using the **MD2 (Material Design 2) style set** — MD3 opt-in components are not in scope for this feature
 - Performance budget from `001` NFR-001 (<2% CPU, <50MB RAM idle) applies equally to this feature — the Material Design library must not cause measurable regression
+
+## Clarifications
+
+### Session 2026-03-21
+
+- Q: Should the side navigation use a Material Design Navigation Rail or Navigation Drawer? → A: Navigation Rail — persistent, always-visible vertical strip; no collapsible drawer
+- Q: Should the implementation use Material Design 2 (MD2) or Material Design 3 (MD3) styles from MaterialDesignInXamlToolkit? → A: MD2 (default) — full WPF control coverage; MD3 opt-in components are out of scope
+- Q: Should the MaterialDesignInXamlToolkit package version be pinned or float to latest stable? → A: Pin to exact version at time of implementation; no floating version ranges

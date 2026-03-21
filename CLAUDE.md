@@ -1,10 +1,11 @@
 ﻿# opendash-overlays Development Guidelines
 
-Auto-generated from all feature plans. Last updated: 2026-03-18
+Auto-generated from all feature plans. Last updated: 2026-03-21
 
 ## Active Technologies
 - C# 12 / .NET 10.0-windows + WPF (UI), WinForms (NotifyIcon/SystemTray), System.Management (WMI process monitoring), Vortice.DirectInput 3.8.2 (WheelOverlay only), FsCheck 2.16.6 + FsCheck.Xunit (property tests), xUnit 2.x, WiX 4.0.5 (MSI installer), GitHub Actions (001-opendash-monorepo-rebrand)
 - JSON settings at `%APPDATA%\WheelOverlay\settings.json`; log file at `%APPDATA%\WheelOverlay\logs.txt` (1 MB rotation) (001-opendash-monorepo-rebrand)
+- MaterialDesignThemes.Wpf v5.1.x (MD2 style set, WheelOverlay settings window) (wheel-overlay/v0.7.0)
 
 - C# 12 / .NET 10.0-windows + WPF (UI), WinForms (NotifyIcon/SystemTray), System.Management (WMI), Vortice.DirectInput (WheelOverlay only), xUnit, FsCheck 2.16.6, WiX 4 (MSI installer), GitHub Actions (001-opendash-monorepo-rebrand)
 
@@ -55,6 +56,7 @@ powershell -File scripts/wheel-overlay/build_msi.ps1
 - OverlayCore MUST NOT have `<Version>` in its .csproj
 
 ## Recent Changes
+- wheel-overlay/v0.7.0: Added MaterialDesignThemes.Wpf v5.1.x (MD2) — visual refactor of settings window; new MaterialDesignBootstrap helper in OverlayCore; ThemeService extended with PaletteHelper sync
 - 001-opendash-monorepo-rebrand: Added C# 12 / .NET 10.0-windows + WPF (UI), WinForms (NotifyIcon/SystemTray), System.Management (WMI process monitoring), Vortice.DirectInput 3.8.2 (WheelOverlay only), FsCheck 2.16.6 + FsCheck.Xunit (property tests), xUnit 2.x, WiX 4.0.5 (MSI installer), GitHub Actions
 
 - 001-opendash-monorepo-rebrand: Added C# 12 / .NET 10.0-windows + WPF (UI), WinForms (NotifyIcon/SystemTray), System.Management (WMI), Vortice.DirectInput (WheelOverlay only), xUnit, FsCheck 2.16.6, WiX 4 (MSI installer), GitHub Actions

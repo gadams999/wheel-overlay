@@ -72,16 +72,17 @@ function Test-FeatureBranch {
         [string]$Branch,
         [bool]$HasGit = $true
     )
-    
+
     # For non-git repos, we can't enforce branch naming but still provide output
     if (-not $HasGit) {
         Write-Warning "[specify] Warning: Git repository not detected; skipped branch validation"
         return $true
     }
-    
-    if ($Branch -notmatch '^[0-9]{3}-') {
+
+    # Accept legacy NNN-feature-name format OR version-based [overlay-name/]vN.N.N format
+    if ($Branch -notmatch '^[0-9]{3}-' -and $Branch -notmatch '^([a-z][a-z0-9-]*/)?v[0-9]+\.[0-9]+\.[0-9]+$') {
         Write-Output "ERROR: Not on a feature branch. Current branch: $Branch"
-        Write-Output "Feature branches should be named like: 001-feature-name"
+        Write-Output "Feature branches should be named like: 001-feature-name or wheel-overlay/v0.7.0"
         return $false
     }
     return $true
@@ -89,6 +90,29 @@ function Test-FeatureBranch {
 
 function Get-FeatureDir {
     param([string]$RepoRoot, [string]$Branch)
+
+    # For version-based branch names (e.g. wheel-overlay/v0.7.0), find the spec folder
+    # by searching for a spec.md that declares this branch in its **Feature Branch** field.
+    if ($Branch -match '^([a-z][a-z0-9-]*/)?v[0-9]+\.[0-9]+\.[0-9]+$') {
+        $specsDir = Join-Path $RepoRoot "specs"
+        if (Test-Path $specsDir) {
+            $escapedBranch = [regex]::Escape($Branch)
+            $found = Get-ChildItem -Path $specsDir -Directory |
+                Where-Object { $_.Name -match '^\d{3}-' } |
+                Where-Object {
+                    $specFile = Join-Path $_.FullName "spec.md"
+                    if (Test-Path $specFile) {
+                        $content = Get-Content $specFile -Raw -ErrorAction SilentlyContinue
+                        $content -match "\*\*Feature Branch\*\*:\s*``?$escapedBranch``?"
+                    } else { $false }
+                } |
+                Select-Object -First 1
+
+            if ($found) { return $found.FullName }
+        }
+    }
+
+    # Fall back: legacy NNN-feature-name branches use the branch name as the folder name
     Join-Path $RepoRoot "specs/$Branch"
 }
 
