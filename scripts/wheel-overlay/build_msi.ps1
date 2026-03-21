@@ -108,7 +108,7 @@ if (-not $wixCmd) {
 }
 
 # Build the MSI with custom UI
-wix build Package.wxs CustomUI.wxs -o WheelOverlay.msi
+wix build Package.wxs CustomUI.wxs -ext WixToolset.UI.wixext -o WheelOverlay.msi
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "MSI build failed!" -ForegroundColor Red
