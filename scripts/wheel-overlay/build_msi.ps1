@@ -107,6 +107,10 @@ if (-not $wixCmd) {
     exit 1
 }
 
+# Register WixUI extension in this directory's .wix context
+Write-Host "  Registering WixToolset.UI.wixext..." -ForegroundColor Gray
+wix extension add WixToolset.UI.wixext/4.0.5
+
 # Build the MSI with custom UI
 wix build Package.wxs CustomUI.wxs -ext WixToolset.UI.wixext -o WheelOverlay.msi
 
