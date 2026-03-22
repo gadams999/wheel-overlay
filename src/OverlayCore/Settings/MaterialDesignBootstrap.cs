@@ -11,6 +11,9 @@ public static class MaterialDesignBootstrap
     private static bool _initialized;
     private static readonly object _lock = new();
 
+    /// <summary>True once EnsureInitialized has successfully merged MDIX resources.</summary>
+    public static bool IsInitialized => _initialized;
+
     /// <summary>
     /// Ensures MaterialDesignThemes resources are merged into the application's
     /// resource dictionary. Safe to call multiple times; only the first call
@@ -37,7 +40,7 @@ public static class MaterialDesignBootstrap
 
                 app.Resources.MergedDictionaries.Add(new System.Windows.ResourceDictionary
                 {
-                    Source = new Uri("pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml")
+                    Source = new Uri("pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign2.Defaults.xaml")
                 });
 
                 _initialized = true;

@@ -57,6 +57,8 @@ public sealed class AppearanceSettingsCategory : ISettingsCategory
         // Theme
         AddLabel(root, "Theme");
         _themeComboBox = new ComboBox { Width = 200, HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0, 0, 0, 15) };
+        MaterialDesignThemes.Wpf.HintAssist.SetHint(_themeComboBox, "Theme");
+        _themeComboBox.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignFilledComboBox");
         _themeComboBox.Items.Add(new ComboBoxItem { Content = "System Default", Tag = "System" });
         _themeComboBox.Items.Add(new ComboBoxItem { Content = "Light", Tag = "Light" });
         _themeComboBox.Items.Add(new ComboBoxItem { Content = "Dark", Tag = "Dark" });
@@ -78,12 +80,14 @@ public sealed class AppearanceSettingsCategory : ISettingsCategory
         // Font size
         AddLabel(root, "Font Size", "Text size for overlay labels (10-80 pt)");
         var (fontSizePanel, fontSizeSlider) = MakeSlider(10, 80, 1, 20);
+        fontSizeSlider.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignSlider");
         _fontSizeSlider = fontSizeSlider;
         root.Children.Add(fontSizePanel);
 
         // Item spacing
         AddLabel(root, "Item Spacing", "Space between items in pixels");
         var (spacingPanel, spacingSlider) = MakeSlider(0, 20, 1, 0);
+        spacingSlider.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignSlider");
         _spacingSlider = spacingSlider;
         root.Children.Add(spacingPanel);
 
@@ -166,6 +170,8 @@ public sealed class AppearanceSettingsCategory : ISettingsCategory
     private ComboBox BuildFontFamilyCombo()
     {
         var combo = new ComboBox { Width = 220, HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0, 0, 0, 15) };
+        MaterialDesignThemes.Wpf.HintAssist.SetHint(combo, "Font Family");
+        combo.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignFilledComboBox");
 
         // Provide a curated list of common system fonts
         var fonts = new[]
@@ -190,6 +196,9 @@ public sealed class AppearanceSettingsCategory : ISettingsCategory
     {
         var panel = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 15) };
         var textBox = new TextBox { Width = 100, VerticalAlignment = VerticalAlignment.Center };
+        MaterialDesignThemes.Wpf.HintAssist.SetHint(textBox, "#RRGGBB");
+        MaterialDesignThemes.Wpf.HintAssist.SetIsFloating(textBox, true);
+        textBox.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignFloatingHintTextBox");
         var pickBtn = new Button { Content = "Pick", Width = 50, Margin = new Thickness(10, 0, 0, 0) };
         pickBtn.Click += (s, e) =>
         {
