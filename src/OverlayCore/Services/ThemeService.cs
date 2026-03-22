@@ -1,4 +1,5 @@
 using System;
+using MaterialDesignThemes.Wpf;
 using Microsoft.Win32;
 using OpenDash.OverlayCore.Models;
 
@@ -82,7 +83,8 @@ public class ThemeService : IDisposable
     }
 
     /// <summary>
-    /// Swaps the theme resource dictionary in Application.Current.Resources.
+    /// Swaps the theme resource dictionary in Application.Current.Resources
+    /// and syncs the MaterialDesign palette to match.
     /// Uses pack URIs to reference OverlayCore assembly resources.
     /// </summary>
     public void ApplyTheme(bool dark)
@@ -97,6 +99,7 @@ public class ThemeService : IDisposable
         var mergedDicts = app.Resources.MergedDictionaries;
 
         // Find the existing theme dictionary (Light or Dark) and replace it
+        bool replaced = false;
         for (int i = 0; i < mergedDicts.Count; i++)
         {
             var source = mergedDicts[i].Source;
@@ -105,12 +108,27 @@ public class ThemeService : IDisposable
                  source.OriginalString.Contains("DarkTheme.xaml")))
             {
                 mergedDicts[i] = new System.Windows.ResourceDictionary { Source = targetSource };
-                return;
+                replaced = true;
+                break;
             }
         }
 
         // No existing theme dictionary found — add one
-        mergedDicts.Insert(0, new System.Windows.ResourceDictionary { Source = targetSource });
+        if (!replaced)
+            mergedDicts.Insert(0, new System.Windows.ResourceDictionary { Source = targetSource });
+
+        // Sync MaterialDesign palette to match the active theme
+        try
+        {
+            var paletteHelper = new PaletteHelper();
+            var theme = paletteHelper.GetTheme();
+            theme.SetBaseTheme(dark ? BaseTheme.Dark : BaseTheme.Light);
+            paletteHelper.SetTheme(theme);
+        }
+        catch (Exception ex)
+        {
+            LogService.Error("ThemeService.ApplyTheme: failed to sync MaterialDesign palette", ex);
+        }
     }
 
     /// <summary>
