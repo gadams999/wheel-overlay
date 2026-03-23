@@ -17,9 +17,9 @@ public partial class MaterialSettingsWindow : Window
     /// <summary>Fired after OK or Apply saves all category values.</summary>
     public event EventHandler? SettingsApplied;
 
-    public MaterialSettingsWindow()
+    public MaterialSettingsWindow(bool isDark = false)
     {
-        MaterialDesignBootstrap.EnsureInitialized();
+        MaterialDesignBootstrap.EnsureInitialized(isDark);
         InitializeComponent();
     }
 

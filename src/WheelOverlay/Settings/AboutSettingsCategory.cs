@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
+using Button = System.Windows.Controls.Button;
 using HorizontalAlignment = System.Windows.HorizontalAlignment;
 using Image = System.Windows.Controls.Image;
 using OpenDash.OverlayCore.Services;
@@ -51,6 +51,7 @@ public sealed class AboutSettingsCategory : ISettingsCategory
             Margin = new Thickness(0, 0, 0, 4)
         };
         appName.SetResourceReference(TextBlock.ForegroundProperty, "ThemeForeground");
+        appName.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignHeadline6TextBlock");
         panel.Children.Add(appName);
 
         // Version
@@ -62,6 +63,7 @@ public sealed class AboutSettingsCategory : ISettingsCategory
             Margin = new Thickness(0, 0, 0, 16)
         };
         versionText.SetResourceReference(TextBlock.ForegroundProperty, "ThemeForeground");
+        versionText.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignBody1TextBlock");
         panel.Children.Add(versionText);
 
         // Description
@@ -77,24 +79,19 @@ public sealed class AboutSettingsCategory : ISettingsCategory
         description.Inlines.Add(new LineBreak());
         description.Inlines.Add(new Run("Display text labels for different rotary encoder positions on your screen during races."));
         description.SetResourceReference(TextBlock.ForegroundProperty, "ThemeForeground");
+        description.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignBody2TextBlock");
         panel.Children.Add(description);
 
         // GitHub link
-        var linkText = new TextBlock
+        var githubBtn = new Button
         {
+            Content = "GitHub Repository",
             HorizontalAlignment = HorizontalAlignment.Center,
-            Margin = new Thickness(0, 0, 0, 16)
+            Margin = new Thickness(0, 0, 0, 16),
+            Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignFlatButton")
         };
-        linkText.SetResourceReference(TextBlock.ForegroundProperty, "ThemeForeground");
-        var hyperlink = new Hyperlink
-        {
-            NavigateUri = new Uri("https://github.com/gadams999/wheel-overlay")
-        };
-        hyperlink.SetResourceReference(Hyperlink.ForegroundProperty, "ThemeAccent");
-        hyperlink.Inlines.Add("GitHub Repository");
-        hyperlink.RequestNavigate += OnHyperlinkNavigate;
-        linkText.Inlines.Add(hyperlink);
-        panel.Children.Add(linkText);
+        githubBtn.Click += OpenGitHubLink;
+        panel.Children.Add(githubBtn);
 
         // Copyright
         var copyright = new TextBlock
@@ -128,12 +125,11 @@ public sealed class AboutSettingsCategory : ISettingsCategory
         }
     }
 
-    private static void OnHyperlinkNavigate(object sender, RequestNavigateEventArgs e)
+    private static void OpenGitHubLink(object sender, RoutedEventArgs e)
     {
         try
         {
-            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
-            e.Handled = true;
+            Process.Start(new ProcessStartInfo("https://github.com/gadams999/wheel-overlay") { UseShellExecute = true });
         }
         catch (Exception ex)
         {

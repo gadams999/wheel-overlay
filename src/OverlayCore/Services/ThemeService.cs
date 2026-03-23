@@ -1,5 +1,4 @@
 using System;
-using MaterialDesignThemes.Wpf;
 using Microsoft.Win32;
 using OpenDash.OverlayCore.Models;
 using OpenDash.OverlayCore.Settings;
@@ -118,21 +117,8 @@ public class ThemeService : IDisposable
         if (!replaced)
             mergedDicts.Insert(0, new System.Windows.ResourceDictionary { Source = targetSource });
 
-        // Sync MaterialDesign palette only once MDIX resources are loaded
-        if (MaterialDesignBootstrap.IsInitialized)
-        {
-            try
-            {
-                var paletteHelper = new PaletteHelper();
-                var theme = paletteHelper.GetTheme();
-                theme.SetBaseTheme(dark ? BaseTheme.Dark : BaseTheme.Light);
-                paletteHelper.SetTheme(theme);
-            }
-            catch (Exception ex)
-            {
-                LogService.Error("ThemeService.ApplyTheme: failed to sync MaterialDesign palette", ex);
-            }
-        }
+        // Swap the MD base-theme XAML to match (no-op if settings window not yet opened)
+        MaterialDesignBootstrap.SwapTheme(dark);
     }
 
     /// <summary>
