@@ -141,6 +141,7 @@ public sealed class DisplaySettingsCategory : ISettingsCategory
     {
         AddLabel("Wheel Device");
         _deviceComboBox = new ComboBox { Margin = new Thickness(0, 0, 0, 15) };
+        _deviceComboBox.SetResourceReference(ComboBox.ForegroundProperty, "ThemeForeground");
         MaterialDesignThemes.Wpf.HintAssist.SetHint(_deviceComboBox, "Wheel Device");
         _deviceComboBox.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignComboBox");
         foreach (var wheel in WheelDefinition.SupportedWheels)
@@ -152,6 +153,7 @@ public sealed class DisplaySettingsCategory : ISettingsCategory
             {
                 _settings.SelectedDeviceName = newDevice;
                 _settings.SelectedProfileId = Guid.Empty;
+                _settings.Save();
                 LoadValues(); // Rebuild entire display
             }
         };
@@ -170,6 +172,7 @@ public sealed class DisplaySettingsCategory : ISettingsCategory
         };
 
         _profileComboBox = new ComboBox { Width = 200, Margin = new Thickness(0, 0, 10, 0) };
+        _profileComboBox.SetResourceReference(ComboBox.ForegroundProperty, "ThemeForeground");
         _profileComboBox.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignComboBox");
         var profiles = GetProfilesForCurrentDevice();
         foreach (var p in profiles)
@@ -184,11 +187,12 @@ public sealed class DisplaySettingsCategory : ISettingsCategory
             {
                 SaveValues();
                 _settings.SelectedProfileId = (Guid)sel.Tag;
+                _settings.Save();
                 LoadValues();
             }
         };
 
-        var newBtn = new Button { Content = "New", Width = 60, Margin = new Thickness(0, 0, 5, 0) };
+        var newBtn = new Button { Content = "New", MinWidth = 64, Margin = new Thickness(0, 0, 5, 0) };
         newBtn.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignOutlinedButton");
         newBtn.Click += (s, e) =>
         {
@@ -197,14 +201,15 @@ public sealed class DisplaySettingsCategory : ISettingsCategory
             newProfile.Layout = _currentProfile.Layout;
             newProfile.TextLabels = new List<string>(_currentProfile.TextLabels);
             _settings.SelectedProfileId = newProfile.Id;
+            _settings.Save();
             LoadValues();
         };
 
-        var renameBtn = new Button { Content = "Rename", Width = 60, Margin = new Thickness(0, 0, 5, 0) };
+        var renameBtn = new Button { Content = "Rename", MinWidth = 76, Margin = new Thickness(0, 0, 5, 0) };
         renameBtn.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignOutlinedButton");
         renameBtn.Click += (s, e) => RenameProfile();
 
-        var delBtn = new Button { Content = "Delete", Width = 60 };
+        var delBtn = new Button { Content = "Delete", MinWidth = 70 };
         delBtn.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignOutlinedButton");
         delBtn.Click += (s, e) => DeleteProfile();
 
@@ -220,6 +225,7 @@ public sealed class DisplaySettingsCategory : ISettingsCategory
         if (_currentProfile == null) return;
         AddLabel("Number of Positions", "Configure how many positions your wheel has (2-20)");
         _positionCountComboBox = new ComboBox { Margin = new Thickness(0, 0, 0, 15) };
+        _positionCountComboBox.SetResourceReference(ComboBox.ForegroundProperty, "ThemeForeground");
         MaterialDesignThemes.Wpf.HintAssist.SetHint(_positionCountComboBox, "Position Count");
         _positionCountComboBox.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignComboBox");
         foreach (int count in _viewModel.AvailablePositionCounts)
@@ -243,6 +249,7 @@ public sealed class DisplaySettingsCategory : ISettingsCategory
         var dimRow = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 5, 0, 5) };
         var rowsLabel = MakeInlineLabel("Rows:", 50);
         _gridRowsComboBox = new ComboBox { Width = 60, Margin = new Thickness(0, 0, 10, 0) };
+        _gridRowsComboBox.SetResourceReference(ComboBox.ForegroundProperty, "ThemeForeground");
         _gridRowsComboBox.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignComboBox");
         foreach (int r in _viewModel.AvailableRows) _gridRowsComboBox.Items.Add(r);
         _gridRowsComboBox.SelectedItem = _currentProfile.GridRows;
@@ -253,6 +260,7 @@ public sealed class DisplaySettingsCategory : ISettingsCategory
 
         var colsLabel = MakeInlineLabel("Columns:", 70);
         _gridColumnsComboBox = new ComboBox { Width = 60 };
+        _gridColumnsComboBox.SetResourceReference(ComboBox.ForegroundProperty, "ThemeForeground");
         _gridColumnsComboBox.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignComboBox");
         foreach (int c in _viewModel.AvailableColumns) _gridColumnsComboBox.Items.Add(c);
         _gridColumnsComboBox.SelectedItem = _currentProfile.GridColumns;
@@ -311,6 +319,7 @@ public sealed class DisplaySettingsCategory : ISettingsCategory
             var lbl = MakeInlineLabel($"Position {i + 1}:", 80);
             var val = i < _currentProfile.TextLabels.Count ? _currentProfile.TextLabels[i] : "";
             var tb = new TextBox { Width = 180, Text = val };
+            tb.SetResourceReference(TextBox.ForegroundProperty, "ThemeForeground");
             _labelTextBoxes[i] = tb;
             row.Children.Add(lbl);
             row.Children.Add(tb);
@@ -326,6 +335,7 @@ public sealed class DisplaySettingsCategory : ISettingsCategory
         if (_currentProfile == null) return;
         AddLabel("Display Layout");
         _layoutComboBox = new ComboBox { Margin = new Thickness(0, 0, 0, 15) };
+        _layoutComboBox.SetResourceReference(ComboBox.ForegroundProperty, "ThemeForeground");
         _layoutComboBox.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignComboBox");
         _layoutComboBox.Items.Add(MakeComboItem("Single Text", "Single"));
         _layoutComboBox.Items.Add(MakeComboItem("Vertical List", "Vertical"));
@@ -407,6 +417,7 @@ public sealed class DisplaySettingsCategory : ISettingsCategory
 
         _viewModel.UpdatePositionCount(newCount);
         ValidateAndAdjustGridDimensions();
+        SaveValues();
         LoadValues(); // Rebuild to show updated label inputs
     }
 
@@ -492,6 +503,7 @@ public sealed class DisplaySettingsCategory : ISettingsCategory
         if (dialog.ShowDialog() == true && !string.IsNullOrWhiteSpace(tb.Text))
         {
             _currentProfile.Name = tb.Text.Trim();
+            _settings.Save();
             LoadValues();
         }
     }
@@ -510,6 +522,7 @@ public sealed class DisplaySettingsCategory : ISettingsCategory
         {
             _settings.Profiles.Remove(_currentProfile);
             _settings.SelectedProfileId = profiles.First(p => p.Id != _currentProfile.Id).Id;
+            _settings.Save();
             LoadValues();
         }
     }

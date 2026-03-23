@@ -57,6 +57,7 @@ public sealed class AppearanceSettingsCategory : ISettingsCategory
         // Theme
         AddLabel(root, "Theme");
         _themeComboBox = new ComboBox { Width = 200, HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0, 0, 0, 15) };
+        _themeComboBox.SetResourceReference(ComboBox.ForegroundProperty, "ThemeForeground");
         MaterialDesignThemes.Wpf.HintAssist.SetHint(_themeComboBox, "Theme");
         _themeComboBox.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignComboBox");
         _themeComboBox.Items.Add(new ComboBoxItem { Content = "System Default", Tag = "System" });
@@ -170,6 +171,7 @@ public sealed class AppearanceSettingsCategory : ISettingsCategory
     private ComboBox BuildFontFamilyCombo()
     {
         var combo = new ComboBox { Width = 220, HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0, 0, 0, 15) };
+        combo.SetResourceReference(ComboBox.ForegroundProperty, "ThemeForeground");
         MaterialDesignThemes.Wpf.HintAssist.SetHint(combo, "Font Family");
         combo.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignComboBox");
 
@@ -196,10 +198,11 @@ public sealed class AppearanceSettingsCategory : ISettingsCategory
     {
         var panel = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 15) };
         var textBox = new TextBox { Width = 100, VerticalAlignment = VerticalAlignment.Center };
+        textBox.SetResourceReference(TextBox.ForegroundProperty, "ThemeForeground");
         MaterialDesignThemes.Wpf.HintAssist.SetHint(textBox, "#RRGGBB");
         MaterialDesignThemes.Wpf.HintAssist.SetIsFloating(textBox, true);
         textBox.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignFloatingHintTextBox");
-        var pickBtn = new Button { Content = "Pick", Width = 50, Margin = new Thickness(10, 0, 0, 0) };
+        var pickBtn = new Button { Content = "Pick", MinWidth = 60, Margin = new Thickness(10, 0, 0, 0) };
         pickBtn.Click += (s, e) =>
         {
             var dialog = new System.Windows.Forms.ColorDialog();
