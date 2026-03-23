@@ -142,7 +142,7 @@ public sealed class DisplaySettingsCategory : ISettingsCategory
         AddLabel("Wheel Device");
         _deviceComboBox = new ComboBox { Margin = new Thickness(0, 0, 0, 15) };
         MaterialDesignThemes.Wpf.HintAssist.SetHint(_deviceComboBox, "Wheel Device");
-        _deviceComboBox.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignFilledComboBox");
+        _deviceComboBox.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignComboBox");
         foreach (var wheel in WheelDefinition.SupportedWheels)
             _deviceComboBox.Items.Add(wheel.DeviceName);
         _deviceComboBox.SelectedItem = _settings.SelectedDeviceName;
@@ -221,7 +221,7 @@ public sealed class DisplaySettingsCategory : ISettingsCategory
         AddLabel("Number of Positions", "Configure how many positions your wheel has (2-20)");
         _positionCountComboBox = new ComboBox { Margin = new Thickness(0, 0, 0, 15) };
         MaterialDesignThemes.Wpf.HintAssist.SetHint(_positionCountComboBox, "Position Count");
-        _positionCountComboBox.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignFilledComboBox");
+        _positionCountComboBox.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignComboBox");
         foreach (int count in _viewModel.AvailablePositionCounts)
             _positionCountComboBox.Items.Add(count);
         _positionCountComboBox.SelectedItem = _currentProfile.PositionCount;

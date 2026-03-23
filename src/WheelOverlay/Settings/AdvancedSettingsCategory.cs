@@ -4,7 +4,6 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using Binding = System.Windows.Data.Binding;
 using Button = System.Windows.Controls.Button;
-using Control = System.Windows.Controls.Control;
 using HorizontalAlignment = System.Windows.HorizontalAlignment;
 using MessageBox = System.Windows.MessageBox;
 using Orientation = System.Windows.Controls.Orientation;
@@ -66,9 +65,11 @@ public sealed class AdvancedSettingsCategory : ISettingsCategory
         _targetExeDisplay.SetResourceReference(TextBlock.ForegroundProperty, "ThemeForeground");
 
         var browseBtn = new Button { Content = "Browse...", Width = 80, Margin = new Thickness(0, 0, 5, 0) };
+        browseBtn.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignOutlinedButton");
         browseBtn.Click += OnBrowseClick;
 
         _clearButton = new Button { Content = "Clear", Width = 60 };
+        _clearButton.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignOutlinedButton");
         _clearButton.Click += OnClearClick;
 
         filePanel.Children.Add(_targetExeDisplay);
@@ -79,6 +80,7 @@ public sealed class AdvancedSettingsCategory : ISettingsCategory
         // --- Move Overlay Opacity ---
         AddLabel(root, "Move Overlay Opacity", "Overlay transparency when repositioning (0 = invisible, 100 = fully opaque)");
         var (opacityPanel, opacitySlider) = MakeSlider(0, 100, 10, 80);
+        opacitySlider.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignSlider");
         _opacitySlider = opacitySlider;
         root.Children.Add(opacityPanel);
 
@@ -105,9 +107,7 @@ public sealed class AdvancedSettingsCategory : ISettingsCategory
             HorizontalAlignment = HorizontalAlignment.Left,
             ToolTip = "Opens the folder containing your settings and log files in File Explorer"
         };
-        openFolderBtn.SetResourceReference(Control.BackgroundProperty, "ThemeControlBackground");
-        openFolderBtn.SetResourceReference(Control.ForegroundProperty, "ThemeControlForeground");
-        openFolderBtn.SetResourceReference(Control.BorderBrushProperty, "ThemeControlBorder");
+        openFolderBtn.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignOutlinedButton");
         openFolderBtn.Click += OpenSettingsFolder_Click;
         root.Children.Add(openFolderBtn);
 
@@ -119,9 +119,7 @@ public sealed class AdvancedSettingsCategory : ISettingsCategory
             HorizontalAlignment = HorizontalAlignment.Left,
             ToolTip = "Deletes your settings file and restores all options to their default values"
         };
-        resetBtn.SetResourceReference(Control.BackgroundProperty, "ThemeControlBackground");
-        resetBtn.SetResourceReference(Control.ForegroundProperty, "ThemeControlForeground");
-        resetBtn.SetResourceReference(Control.BorderBrushProperty, "ThemeControlBorder");
+        resetBtn.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignOutlinedButton");
         resetBtn.Click += ResetSettings_Click;
         root.Children.Add(resetBtn);
 

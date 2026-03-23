@@ -58,7 +58,7 @@ public sealed class AppearanceSettingsCategory : ISettingsCategory
         AddLabel(root, "Theme");
         _themeComboBox = new ComboBox { Width = 200, HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0, 0, 0, 15) };
         MaterialDesignThemes.Wpf.HintAssist.SetHint(_themeComboBox, "Theme");
-        _themeComboBox.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignFilledComboBox");
+        _themeComboBox.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignComboBox");
         _themeComboBox.Items.Add(new ComboBoxItem { Content = "System Default", Tag = "System" });
         _themeComboBox.Items.Add(new ComboBoxItem { Content = "Light", Tag = "Light" });
         _themeComboBox.Items.Add(new ComboBoxItem { Content = "Dark", Tag = "Dark" });
@@ -171,7 +171,7 @@ public sealed class AppearanceSettingsCategory : ISettingsCategory
     {
         var combo = new ComboBox { Width = 220, HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0, 0, 0, 15) };
         MaterialDesignThemes.Wpf.HintAssist.SetHint(combo, "Font Family");
-        combo.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignFilledComboBox");
+        combo.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignComboBox");
 
         // Provide a curated list of common system fonts
         var fonts = new[]

@@ -19,6 +19,7 @@ public partial class MaterialSettingsWindow : Window
 
     public MaterialSettingsWindow()
     {
+        MaterialDesignBootstrap.EnsureInitialized();
         InitializeComponent();
     }
 
@@ -75,6 +76,14 @@ public partial class MaterialSettingsWindow : Window
         catch (Exception ex)
         {
             LogService.Error($"Error loading category '{newCategory.CategoryName}'", ex);
+            var errorBlock = new TextBlock
+            {
+                Text = $"Failed to load '{newCategory.CategoryName}': {ex.Message}",
+                TextWrapping = TextWrapping.Wrap,
+                Margin = new Thickness(0, 8, 0, 0),
+                Foreground = System.Windows.Media.Brushes.Red
+            };
+            CategoryContent.Content = errorBlock;
         }
     }
 
