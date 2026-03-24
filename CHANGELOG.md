@@ -7,20 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-03-24
+
+> Feature release upgrading the settings window to Material Design 2, adding a global reposition hotkey, and completing the monorepo rebrand to opendash-overlays.
+
 ### Added
-- **Material Design 2 Settings Window**: Upgraded settings window to Material Design 2 visual style with ripple navigation rail, floating-label inputs, and MD-typed buttons; MD2 palette syncs automatically with light/dark theme changes
+- **Material Design 2 Settings Window**: Full MD2 visual upgrade — ripple navigation rail, floating-label inputs, MD-typed buttons (raised OK/Apply, flat Cancel), and MD surface colours; MD2 palette syncs automatically on light/dark theme change via `PaletteHelper`
+- **MaterialDesignBootstrap Helper**: New `OverlayCore` helper (`MaterialDesignBootstrap.EnsureInitialized`) merges MDIX resource dictionaries idempotently at startup; all failures logged via `LogService.Error` without throwing
 - **Alt+F6 Global Hotkey**: Press Alt+F6 at any time to enter overlay repositioning mode; falls back gracefully to system tray "Configure overlay position" if the hotkey is already claimed by another application
-- **Modern Settings Window**: Redesigned settings window with side-navigation category layout; categories register via the `MaterialSettingsWindow.RegisterCategory` pattern from OverlayCore
+- **Modern Settings Window**: Redesigned settings window with side-navigation category layout; categories register via the `MaterialSettingsWindow.RegisterCategory` pattern from `OverlayCore`
 - **About Section in Settings**: Application information (version, GitHub link, acknowledgements) now lives as a dedicated category inside the settings window
 - **Shared Font Resources**: `OverlayCore` provides `SharedFontResources.xaml` for consistent Open Sans typography across all overlay apps
 - **WheelOverlay User Documentation**: Four-part guide covering installation, usage, tips, and troubleshooting (`docs/wheel-overlay/`)
 - **Contributing Guide**: `docs/CONTRIBUTING.md` documents monorepo conventions, branch naming, version bump rules, and property-test requirements
 
 ### Changed
-- **Settings Window**: Redesigned with category-registration pattern; each concern (Display, Appearance, About) is a self-contained category class registered at startup
+- **ThemeService**: `ApplyTheme(bool isDark)` now syncs the MD2 palette via `PaletteHelper` after every theme dictionary swap; `IsDarkMode` update is preserved on failure path
+- **Settings Window**: Redesigned with category-registration pattern; each concern (Display, Appearance, Advanced, About) is a self-contained category class registered at startup
+- **GitHub repo links**: All docs and source references updated from `gadams999/wheel-overlay` to `gadams999/opendash-overlays`
 
 ### Removed
 - **Separate About Dialog**: The standalone About window has been removed; About information is now an integrated category in the settings window
+- **Implicit WPF styles in theme dictionaries**: Removed broad implicit `Style` entries from `DarkTheme.xaml` / `LightTheme.xaml` that were overriding MD2 control styles and causing visual regressions
+
+### Fixed
+- Button clipping on Advanced and Appearance settings panels caused by fixed `Width` values incompatible with MD2 button padding; replaced with `MinWidth`
+- Dark-mode foreground colours on ComboBox, TextBox, and Slider controls now correctly inherit from MD2 palette
 
 ## [0.6.0] - 2026-03-07
 
