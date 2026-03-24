@@ -14,7 +14,7 @@ namespace OpenDash.WheelOverlay.Tests
 {
     public class AppSettingsSerializationPropertyTests
     {
-        // Feature: v0.6.0-enhancements, Property 4: AppSettings serialization round-trip
+        // Feature: Material-Design-Settings, Property 4: AppSettings serialise/deserialise round-trip preserves all values
         // Validates: Requirements 9.1, 9.2, 9.4, 2.4, 7.4
         // For any valid AppSettings with all enum values including Dial and ThemePreference,
         // serialize then deserialize should produce equivalent object.

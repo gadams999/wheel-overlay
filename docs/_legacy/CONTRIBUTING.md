@@ -15,8 +15,8 @@ Thank you for your interest in contributing to WheelOverlay! This guide will hel
 
 1. **Fork and Clone**
    ```bash
-   git clone https://github.com/YOUR_USERNAME/wheel-overlay.git
-   cd wheel-overlay
+   git clone https://github.com/gadams999/opendash-overlays.git
+   cd opendash-overlays
    ```
 
 2. **Restore Dependencies**
@@ -472,8 +472,8 @@ When your PR is merged to main:
 
 ## Getting Help
 
-- **Questions**: Open a [GitHub Discussion](https://github.com/gadams999/wheel-overlay/discussions)
-- **Bugs**: Open a [GitHub Issue](https://github.com/gadams999/wheel-overlay/issues)
+- **Questions**: Open a [GitHub Discussion](https://github.com/gadams999/opendash-overlays/discussions)
+- **Bugs**: Open a [GitHub Issue](https://github.com/gadams999/opendash-overlays/issues)
 - **Documentation**: Check README.md, docs/PROPERTY_TESTING.md, docs/CI_CD_SETUP.md
 
 ## Code of Conduct

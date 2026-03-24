@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Material Design 2 Settings Window**: Upgraded settings window to Material Design 2 visual style with ripple navigation rail, floating-label inputs, and MD-typed buttons; MD2 palette syncs automatically with light/dark theme changes
 - **Alt+F6 Global Hotkey**: Press Alt+F6 at any time to enter overlay repositioning mode; falls back gracefully to system tray "Configure overlay position" if the hotkey is already claimed by another application
 - **Modern Settings Window**: Redesigned settings window with side-navigation category layout; categories register via the `MaterialSettingsWindow.RegisterCategory` pattern from OverlayCore
 - **About Section in Settings**: Application information (version, GitHub link, acknowledgements) now lives as a dedicated category inside the settings window
@@ -80,7 +81,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **CI Test Failures**: Added skip guards for WPF window tests unreliable in headless CI environments
 - **Git Tracking**: Fixed `.gitignore` pattern that excluded PowerShell test scripts from `scripts/` directory
 
-## [0.5.3](https://github.com/gadams999/wheel-overlay/compare/v0.5.2...v0.5.3) (2026-01-13)
+## [0.5.3](https://github.com/gadams999/opendash-overlays/compare/v0.5.2...v0.5.3) (2026-01-13)
 
 > Critical bug fix release resolving application exit issues and implementing single-instance enforcement.
 
@@ -136,7 +137,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Prevents premature shutdown when windows close
   - Gives application full control over lifecycle
 
-## [0.5.2](https://github.com/gadams999/wheel-overlay/compare/v0.5.0...v0.5.2) (2026-01-12)
+## [0.5.2](https://github.com/gadams999/opendash-overlays/compare/v0.5.0...v0.5.2) (2026-01-12)
 
 > Major upgrade release migrating to .NET 10, implementing comprehensive automated testing, and fixing critical vertical layout bug.
 
@@ -184,7 +185,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * **Test Infrastructure**: Added UITestBase class for UI automation tests
 * **Code Quality**: Enhanced null-safety and error handling throughout codebase
 
-## [0.5.0](https://github.com/gadams999/wheel-overlay/compare/v0.4.0...v0.5.0) (2024-12-31)
+## [0.5.0](https://github.com/gadams999/opendash-overlays/compare/v0.4.0...v0.5.0) (2024-12-31)
 
 > Enhancement release adding animated transitions, configurable grid layouts, and variable position support for different wheel configurations.
 
@@ -231,7 +232,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Removed tracked bin, obj, and .vs folders
   - Cleaner repository structure
 
-## [0.4.0](https://github.com/gadams999/wheel-overlay/compare/v0.2.0...v0.4.0) (2024-12-29)
+## [0.4.0](https://github.com/gadams999/opendash-overlays/compare/v0.2.0...v0.4.0) (2024-12-29)
 
 > Major feature release adding About dialog, smart text condensing, empty position feedback, enhanced single layout, test mode, and comprehensive test suite. Includes fixes for test mode indicator and first-run text labels.
 
@@ -298,7 +299,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * **Technical**: Design document includes 14 correctness properties validated by tests
 * **Technical**: 3,600+ lines added across 25+ files
 
-## [0.2.0](https://github.com/gadams999/wheel-overlay/compare/v0.1.0...v0.2.0) (2023-XX-XX)
+## [0.2.0](https://github.com/gadams999/opendash-overlays/compare/v0.1.0...v0.2.0) (2023-XX-XX)
 
 > Feature release adding layout profiles, device awareness, dynamic fields, application icon, and robust startup handling.
 
@@ -325,7 +326,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Enhanced settings management with profile support
 * Improved error handling and recovery
 
-## [0.1.0](https://github.com/gadams999/wheel-overlay/releases/tag/v0.1.0) (2023-XX-XX)
+## [0.1.0](https://github.com/gadams999/opendash-overlays/releases/tag/v0.1.0) (2023-XX-XX)
 
 > Initial release of Wheel Overlay with core functionality for displaying wheel position overlays.
 

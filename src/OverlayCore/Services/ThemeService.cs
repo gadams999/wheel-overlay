@@ -1,6 +1,7 @@
 using System;
 using Microsoft.Win32;
 using OpenDash.OverlayCore.Models;
+using OpenDash.OverlayCore.Settings;
 
 namespace OpenDash.OverlayCore.Services;
 
@@ -82,7 +83,8 @@ public class ThemeService : IDisposable
     }
 
     /// <summary>
-    /// Swaps the theme resource dictionary in Application.Current.Resources.
+    /// Swaps the theme resource dictionary in Application.Current.Resources
+    /// and syncs the MaterialDesign palette to match.
     /// Uses pack URIs to reference OverlayCore assembly resources.
     /// </summary>
     public void ApplyTheme(bool dark)
@@ -97,6 +99,7 @@ public class ThemeService : IDisposable
         var mergedDicts = app.Resources.MergedDictionaries;
 
         // Find the existing theme dictionary (Light or Dark) and replace it
+        bool replaced = false;
         for (int i = 0; i < mergedDicts.Count; i++)
         {
             var source = mergedDicts[i].Source;
@@ -105,12 +108,17 @@ public class ThemeService : IDisposable
                  source.OriginalString.Contains("DarkTheme.xaml")))
             {
                 mergedDicts[i] = new System.Windows.ResourceDictionary { Source = targetSource };
-                return;
+                replaced = true;
+                break;
             }
         }
 
         // No existing theme dictionary found — add one
-        mergedDicts.Insert(0, new System.Windows.ResourceDictionary { Source = targetSource });
+        if (!replaced)
+            mergedDicts.Insert(0, new System.Windows.ResourceDictionary { Source = targetSource });
+
+        // Swap the MD base-theme XAML to match (no-op if settings window not yet opened)
+        MaterialDesignBootstrap.SwapTheme(dark);
     }
 
     /// <summary>

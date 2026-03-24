@@ -3,15 +3,8 @@ name: WheelOverlay Release
 on:
   workflow_dispatch:
   push:
-    branches: [main]
     tags:
       - 'wheel-overlay/v*'
-    paths:
-      - 'src/WheelOverlay/**'
-      - 'src/OverlayCore/**'
-      - 'tests/WheelOverlay.Tests/**'
-      - 'tests/OverlayCore.Tests/**'
-      - 'installers/wheel-overlay/**'
 
 permissions:
   contents: write
@@ -76,6 +69,7 @@ jobs:
         $csprojVersion = $csproj.Project.PropertyGroup.Version
         Write-Host "csproj version: $csprojVersion"
         echo "CSPROJ_VERSION=$csprojVersion" >> $env:GITHUB_ENV
+        echo "CSPROJ_VERSION=$csprojVersion" >> $env:GITHUB_OUTPUT
       shell: pwsh
 
     - name: Validate tag version matches .csproj (tag-triggered only)
@@ -117,12 +111,12 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         tag_name: ${{ github.ref_name }}
-        name: WheelOverlay v${{ env.CSPROJ_VERSION }}
+        name: WheelOverlay v${{ steps.get_version.outputs.CSPROJ_VERSION }}
         body_path: release_notes.md
         draft: false
         prerelease: false
         files: |
           Package/WheelOverlay.msi
-          WheelOverlay_v${{ env.CSPROJ_VERSION }}.zip
+          WheelOverlay_v${{ steps.get_version.outputs.CSPROJ_VERSION }}.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -17,8 +17,9 @@ public partial class MaterialSettingsWindow : Window
     /// <summary>Fired after OK or Apply saves all category values.</summary>
     public event EventHandler? SettingsApplied;
 
-    public MaterialSettingsWindow()
+    public MaterialSettingsWindow(bool isDark = false)
     {
+        MaterialDesignBootstrap.EnsureInitialized(isDark);
         InitializeComponent();
     }
 
@@ -75,6 +76,14 @@ public partial class MaterialSettingsWindow : Window
         catch (Exception ex)
         {
             LogService.Error($"Error loading category '{newCategory.CategoryName}'", ex);
+            var errorBlock = new TextBlock
+            {
+                Text = $"Failed to load '{newCategory.CategoryName}': {ex.Message}",
+                TextWrapping = TextWrapping.Wrap,
+                Margin = new Thickness(0, 8, 0, 0),
+                Foreground = System.Windows.Media.Brushes.Red
+            };
+            CategoryContent.Content = errorBlock;
         }
     }
 

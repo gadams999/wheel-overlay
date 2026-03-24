@@ -16,7 +16,7 @@ This guide walks you through installing Wheel Overlay and configuring it for use
 
 ## Installation
 
-1. Download the latest `WheelOverlay-vX.Y.Z.msi` installer from the [Releases page](https://github.com/OpenDash/opendash-overlays/releases).
+1. Download the latest `WheelOverlay-vX.Y.Z.msi` installer from the [Releases page](https://github.com/gadams999/opendash-overlays/releases).
 2. Double-click the `.msi` file and follow the installation wizard.
 3. Accept the default install location or choose your own.
 4. Click **Finish** when the wizard completes.

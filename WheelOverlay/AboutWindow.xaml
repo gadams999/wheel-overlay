@@ -64,7 +64,7 @@
         <TextBlock Grid.Row="4" 
                    Margin="0,0,0,10">
             <Hyperlink x:Name="GitHubHyperlink"
-                       NavigateUri="https://github.com/gadams999/wheel-overlay"
+                       NavigateUri="https://github.com/gadams999/opendash-overlays"
                        RequestNavigate="Hyperlink_RequestNavigate"
                        Foreground="{DynamicResource ThemeAccent}">
                 GitHub Repository

@@ -164,7 +164,7 @@ namespace OpenDash.WheelOverlay
             }
 
             var viewModel = new SettingsViewModel();
-            _settingsWindow = new MaterialSettingsWindow();
+            _settingsWindow = new MaterialSettingsWindow(_themeService?.IsDarkMode ?? false);
             _settingsWindow.RegisterCategory(new DisplaySettingsCategory(viewModel));
             _settingsWindow.RegisterCategory(new AppearanceSettingsCategory());
             _settingsWindow.RegisterCategory(new AdvancedSettingsCategory());

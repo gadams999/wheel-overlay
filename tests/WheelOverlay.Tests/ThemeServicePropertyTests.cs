@@ -12,7 +12,7 @@ namespace OpenDash.WheelOverlay.Tests
 {
     public class ThemeServicePropertyTests
     {
-        // Feature: v0.6.0-enhancements, Property 3: Theme resolution from preference
+        // Feature: Material-Design-Settings, Property 3: ThemeService.IsDarkMode reflects the last ApplyTheme argument
         // Validates: Requirements 7.2, 7.3, 7.5
         // For any ThemePreference and system theme combination, verify effective theme
         // matches expected resolution:

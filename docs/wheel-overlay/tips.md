@@ -94,7 +94,7 @@ Test mode cycles through all positions automatically every second, so you can se
 
 ### Checking Your Current Version
 
-Right-click the tray icon → **Settings** → **About** to see the installed version. Compare against the [Releases page](https://github.com/OpenDash/opendash-overlays/releases) to check for updates.
+Right-click the tray icon → **Settings** → **About** to see the installed version. Compare against the [Releases page](https://github.com/gadams999/opendash-overlays/releases) to check for updates.
 
 ---
 
