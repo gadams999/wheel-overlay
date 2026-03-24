@@ -203,6 +203,7 @@ public sealed class AppearanceSettingsCategory : ISettingsCategory
         MaterialDesignThemes.Wpf.HintAssist.SetIsFloating(textBox, true);
         textBox.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignFloatingHintTextBox");
         var pickBtn = new Button { Content = "Pick", MinWidth = 60, Margin = new Thickness(10, 0, 0, 0) };
+        pickBtn.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignOutlinedButton");
         pickBtn.Click += (s, e) =>
         {
             var dialog = new System.Windows.Forms.ColorDialog();

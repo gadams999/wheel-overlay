@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Material Design 2 Settings Window**: Upgraded settings window to Material Design 2 visual style with ripple navigation rail, floating-label inputs, and MD-typed buttons; MD2 palette syncs automatically with light/dark theme changes
 - **Alt+F6 Global Hotkey**: Press Alt+F6 at any time to enter overlay repositioning mode; falls back gracefully to system tray "Configure overlay position" if the hotkey is already claimed by another application
 - **Modern Settings Window**: Redesigned settings window with side-navigation category layout; categories register via the `MaterialSettingsWindow.RegisterCategory` pattern from OverlayCore
 - **About Section in Settings**: Application information (version, GitHub link, acknowledgements) now lives as a dedicated category inside the settings window

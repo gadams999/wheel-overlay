@@ -64,11 +64,11 @@ public sealed class AdvancedSettingsCategory : ISettingsCategory
         };
         _targetExeDisplay.SetResourceReference(TextBlock.ForegroundProperty, "ThemeForeground");
 
-        var browseBtn = new Button { Content = "Browse...", Width = 80, Margin = new Thickness(0, 0, 5, 0) };
+        var browseBtn = new Button { Content = "Browse...", MinWidth = 90, Margin = new Thickness(0, 0, 5, 0) };
         browseBtn.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignOutlinedButton");
         browseBtn.Click += OnBrowseClick;
 
-        _clearButton = new Button { Content = "Clear", Width = 60 };
+        _clearButton = new Button { Content = "Clear", MinWidth = 64 };
         _clearButton.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignOutlinedButton");
         _clearButton.Click += OnClearClick;
 
@@ -102,7 +102,7 @@ public sealed class AdvancedSettingsCategory : ISettingsCategory
         var openFolderBtn = new Button
         {
             Content = "Open Settings Folder",
-            Width = 180,
+            MinWidth = 180,
             Margin = new Thickness(0, 0, 0, 8),
             HorizontalAlignment = HorizontalAlignment.Left,
             ToolTip = "Opens the folder containing your settings and log files in File Explorer"
@@ -114,7 +114,7 @@ public sealed class AdvancedSettingsCategory : ISettingsCategory
         var resetBtn = new Button
         {
             Content = "Reset to Defaults",
-            Width = 180,
+            MinWidth = 180,
             Margin = new Thickness(0, 0, 0, 8),
             HorizontalAlignment = HorizontalAlignment.Left,
             ToolTip = "Deletes your settings file and restores all options to their default values"
