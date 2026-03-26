@@ -1,11 +1,12 @@
 ﻿# opendash-overlays Development Guidelines
 
-Auto-generated from all feature plans. Last updated: 2026-03-21
+Auto-generated from all feature plans. Last updated: 2026-03-25
 
 ## Active Technologies
 - C# 12 / .NET 10.0-windows + WPF (UI), WinForms (NotifyIcon/SystemTray), System.Management (WMI process monitoring), Vortice.DirectInput 3.8.2 (WheelOverlay only), FsCheck 2.16.6 + FsCheck.Xunit (property tests), xUnit 2.x, WiX 4.0.5 (MSI installer), GitHub Actions (001-opendash-monorepo-rebrand)
 - JSON settings at `%APPDATA%\WheelOverlay\settings.json`; log file at `%APPDATA%\WheelOverlay\logs.txt` (1 MB rotation) (001-opendash-monorepo-rebrand)
 - MaterialDesignThemes v5.3.1 / MaterialDesignThemes.Wpf assembly (MD2 style set, WheelOverlay settings window) (wheel-overlay/v0.7.0)
+- Python 3.14 + MkDocs Material ≥9.5 (docs toolchain: static site, GitHub Pages, custom hooks; deps at scripts/docs/requirements.txt) (docs/docs-hub)
 
 - C# 12 / .NET 10.0-windows + WPF (UI), WinForms (NotifyIcon/SystemTray), System.Management (WMI), Vortice.DirectInput (WheelOverlay only), xUnit, FsCheck 2.16.6, WiX 4 (MSI installer), GitHub Actions (001-opendash-monorepo-rebrand)
 
@@ -56,10 +57,10 @@ powershell -File scripts/wheel-overlay/build_msi.ps1
 - OverlayCore MUST NOT have `<Version>` in its .csproj
 
 ## Recent Changes
+- docs/docs-hub: Added MkDocs Material docs hub — hub-and-spoke architecture, App Gallery, Python hooks for validation/deprecation/gallery, GitHub Actions deploy to docs.opendashoverlays.com
 - wheel-overlay/v0.7.0: Added MaterialDesignThemes v5.3.1 (MD2) — visual refactor of settings window; new MaterialDesignBootstrap helper in OverlayCore; ThemeService extended with PaletteHelper sync
 - 001-opendash-monorepo-rebrand: Added C# 12 / .NET 10.0-windows + WPF (UI), WinForms (NotifyIcon/SystemTray), System.Management (WMI process monitoring), Vortice.DirectInput 3.8.2 (WheelOverlay only), FsCheck 2.16.6 + FsCheck.Xunit (property tests), xUnit 2.x, WiX 4.0.5 (MSI installer), GitHub Actions
 
-- 001-opendash-monorepo-rebrand: Added C# 12 / .NET 10.0-windows + WPF (UI), WinForms (NotifyIcon/SystemTray), System.Management (WMI), Vortice.DirectInput (WheelOverlay only), xUnit, FsCheck 2.16.6, WiX 4 (MSI installer), GitHub Actions
 
 <!-- MANUAL ADDITIONS START -->
 <!-- MANUAL ADDITIONS END -->

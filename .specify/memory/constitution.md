@@ -1,34 +1,32 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version change: 1.1.0 → 2.0.0
-Version bump type: MAJOR — Principle VI redefined. The primary branch naming
-convention changes from `<type>/<description>` (now secondary/ad-hoc only) to
-`[overlay-name/]vN.N.N` for all spec-driven and version-targeted work.
-This is backward-incompatible: branches that followed the old primary format for
-feature work are now non-conformant.
+Version change: 2.0.0 → 2.1.0
+Version bump type: MINOR — New Principle VII added (Documentation and Public Site).
+Adds non-negotiable rules for the project website (opendashoverlays.com),
+user-facing documentation site (docs.opendashoverlays.com), GitHub Pages hosting,
+and MkDocs with the Material Design theme as the documentation toolchain.
 
 Modified principles:
-  - VI. Branch Naming and Conventional Commits — core branch format redefined;
-    version-based naming is now PRIMARY for spec-driven work; type/description
-    retained as SECONDARY for non-versioned ad-hoc work only.
+  - None. Existing principles I–VI unchanged.
 
 Added sections:
-  - None.
+  - Principle VII: Documentation and Public Site — covers FQDN ownership, GitHub
+    Pages hosting, MkDocs + Material Design toolchain, content standards, and
+    CI/CD publication requirements.
 
 Removed sections:
   - None.
 
 Templates updated:
-  ✅ .specify/memory/constitution.md — this file (v2.0.0).
-  ✅ .specify/memory/procedures-branching.md — updated to reflect version-based
-     primary format and spec-folder/branch tie.
-  ✅ .specify/templates/plan-template.md — Branch field updated from
-     `[###-feature-name]` to `[overlay-name/vN.N.N]` to match new convention.
-  ✅ .specify/templates/spec-template.md — Feature Branch field updated to
-     reflect that spec folder name ≠ branch name; branch is version-based.
-  ⚠ .specify/templates/tasks-template.md — Input path still uses `###-feature-name`
-     which refers to the SPEC FOLDER (unchanged); no update needed.
+  ✅ .specify/memory/constitution.md — this file (v2.1.0).
+  ✅ .specify/memory/procedures-documentation.md — extended with MkDocs build
+     and deployment steps, directory layout, and pre-push checklist additions.
+  ⚠  .specify/templates/plan-template.md — no structural change needed; the
+     "Constitution Check" gate will naturally surface Principle VII for
+     documentation-touching specs.
+  ⚠  .specify/templates/spec-template.md — no structural change needed.
+  ⚠  .specify/templates/tasks-template.md — no structural change needed.
 
 Deferred TODOs:
   - None. All fields resolved.
@@ -244,6 +242,39 @@ legible from the branch list and eliminate the disconnect between a spec's
 sequential folder name and the git workflow. The spec folder provides
 permanent traceability; the branch name provides release context.
 
+### VII. Documentation and Public Site
+
+The project's public presence MUST be maintained at `opendashoverlays.com`
+(primary domain) and `docs.opendashoverlays.com` (user-facing documentation).
+Documentation MUST be generated with MkDocs using the Material Design theme
+and published via GitHub Pages.
+
+Non-negotiable rules:
+- User documentation source files MUST live under `docs/{app-name}/` in the
+  monorepo (Markdown, conforming to MkDocs conventions).
+- The MkDocs configuration file (`mkdocs.yml`) MUST reside at the repository
+  root and MUST specify `theme: material` (MkDocs Material Design theme).
+- Generated static content MUST NOT be committed to `main`. GitHub Pages MUST
+  be deployed automatically by CI using either a dedicated `gh-pages` branch or
+  the GitHub Actions deployment source (`actions/deploy-pages`); both satisfy
+  this rule. Manual publishing to either destination is prohibited.
+- A GitHub Actions workflow MUST build (`mkdocs build --strict`) and deploy
+  (via `actions/deploy-pages` or equivalent GitHub Pages deployment action)
+  documentation on every push to `main` that touches `docs/**` or `mkdocs.yml`.
+- The `--strict` flag MUST be used in CI so that broken links, missing
+  references, and malformed Markdown fail the build rather than silently
+  producing a broken site.
+- Documentation pages MUST be user-focused — no internal class names, file
+  paths, or namespace references except in the Developer Guide section.
+- Every new user-facing feature MUST have corresponding documentation added or
+  updated in `docs/{app-name}/` before the feature branch merges to `main`.
+
+**Rationale**: A publicly hosted documentation site at a stable domain
+(`docs.opendashoverlays.com`) is the primary support surface for end users.
+Generating it from source via MkDocs + Material keeps it version-controlled,
+reviewable in PRs, and automatically deployed — eliminating manual publish
+steps that cause drift between code and docs.
+
 ## Technology Stack
 
 **Runtime**: .NET 10.0-windows, WPF (UI), WinForms (system tray / NotifyIcon)
@@ -258,6 +289,8 @@ permanent traceability; the branch name provides release context.
 `Release`
 **Scripting**: PowerShell 7+ scripts under `scripts/` and
 `scripts/{app-name}/`
+**Documentation**: MkDocs with Material Design theme; hosted on GitHub Pages
+at `docs.opendashoverlays.com`; source under `docs/{app-name}/`
 
 All new overlay applications MUST target the same framework version as the
 monorepo baseline. Framework version changes require a constitution amendment.
@@ -272,12 +305,15 @@ monorepo baseline. Framework version changes require a constitution amendment.
 3. Implement changes with tests (Principle II).
 4. Update CHANGELOG.md before the final commit (Principle IV).
 5. Update README.md if user-facing behavior changes.
-6. Open PR to `main`; CI runs `dotnet build` + `dotnet test --configuration
+6. Add or update documentation under `docs/{app-name}/` for any new or
+   changed user-facing features (Principle VII).
+7. Open PR to `main`; CI runs `dotnet build` + `dotnet test --configuration
    FastTests`; property test directives are validated by the shared
    PowerShell script.
-7. Merge after review; CI runs `dotnet test --configuration Release`
-   (100 PBT iterations) on `main`.
-8. Delete the branch after merge.
+8. Merge after review; CI runs `dotnet test --configuration Release`
+   (100 PBT iterations) on `main`; documentation CI builds and deploys to
+   GitHub Pages.
+9. Delete the branch after merge.
 
 **Releasing**:
 - Push a namespaced tag (`wheel-overlay/vX.Y.Z`) to trigger the per-app
@@ -294,6 +330,7 @@ monorepo baseline. Framework version changes require a constitution amendment.
 - Create a dedicated `{app-name}-release.yml` CI/CD workflow with path
   filters scoped to the app's directories plus `src/OverlayCore/**` and
   `tests/OverlayCore.Tests/**`.
+- Add the app's documentation section to `mkdocs.yml` nav.
 
 ## Procedural References
 
@@ -306,7 +343,7 @@ procedural detail.
 |-------------------|------|
 | Bump the app version (which files, what order, how to verify) | `procedures-versioning.md` |
 | Update or finalize CHANGELOG.md (format, entry rules, release promotion) | `procedures-changelog.md` |
-| Update README.md or other documentation before pushing | `procedures-documentation.md` |
+| Update README.md, MkDocs docs, or other documentation before pushing | `procedures-documentation.md` |
 | Name a branch, write a commit message, or scope a tag | `procedures-branching.md` |
 
 These files are descriptive (how-to); this constitution is prescriptive
@@ -332,11 +369,12 @@ the non-negotiable rules.
 
 **Compliance review**: Every PR description MUST include a "Constitution
 Check" affirming that the branch naming (VI), version bump (III), changelog
-update (IV), and test coverage (II) requirements are satisfied. The plan
-template's "Constitution Check" gate enforces this at spec time.
+update (IV), test coverage (II), and documentation update (VII) requirements
+are satisfied. The plan template's "Constitution Check" gate enforces this at
+spec time.
 
 **Versioning policy**: Principle changes that alter what is MUST/MUST NOT
 are MAJOR. New principles or new SHOULD guidance are MINOR. Typos, examples,
 and rationale additions are PATCH.
 
-**Version**: 2.0.0 | **Ratified**: 2026-03-18 | **Last Amended**: 2026-03-21
+**Version**: 2.1.2 | **Ratified**: 2026-03-18 | **Last Amended**: 2026-03-26

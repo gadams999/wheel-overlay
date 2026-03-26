@@ -1,0 +1,42 @@
+site_name: OpenDash Overlays
+site_url: https://docs.opendashoverlays.com
+
+theme:
+  name: material
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+
+nav:
+  - Home: index.md
+  - WheelOverlay:
+    - Overview: wheel-overlay/index.md
+    - Requirements: wheel-overlay/requirements.md
+    - Installation: wheel-overlay/installation.md
+    - Configuration: wheel-overlay/configuration.md
+    - Troubleshooting: wheel-overlay/troubleshooting.md
+  - Common Setup: common-setup/index.md
+  - Contribute: contribute/index.md
+
+exclude_docs: |
+  CONTRIBUTING.md
+  _legacy/
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - attr_list
+  - md_in_html
+
+plugins:
+  - search
+
+hooks:
+  - hooks/gallery.py
+  - hooks/deprecation.py
+  - hooks/validate_structure.py

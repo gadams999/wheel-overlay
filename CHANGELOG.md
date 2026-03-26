@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Documentation Hub**: New documentation site at docs.opendashoverlays.com with App Gallery, WheelOverlay documentation section, Common Setup shared prerequisites, and contributor guide
+
 ## [0.7.0] - 2026-03-24
 
 > Feature release upgrading the settings window to Material Design 2, adding a global reposition hotkey, and completing the monorepo rebrand to opendash-overlays.

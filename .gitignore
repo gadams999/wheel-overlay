@@ -76,3 +76,4 @@ BUILD_FIX_SUMMARY.md
 *.log
 install.log
 uninstall.log
+__pycache__/
