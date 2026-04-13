@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using Application = System.Windows.Application;
 using OpenDash.DiscordChatOverlay.Models;
 using OpenDash.DiscordChatOverlay.Services;
+using OpenDash.DiscordChatOverlay.Settings;
 using OpenDash.DiscordChatOverlay.ViewModels;
 using OpenDash.OverlayCore.Services;
 using OpenDash.OverlayCore.Settings;
@@ -24,6 +26,8 @@ public partial class App : Application
     private VoiceSessionService?    _voiceService;
     private OverlayViewModel?       _overlayViewModel;
     private MainWindow?             _mainWindow;
+    private SettingsViewModel?      _settingsViewModel;
+    private MaterialSettingsWindow? _settingsWindow;
     private CancellationTokenSource _appCts = new();
     private int                     _retryAttempt;
 
@@ -71,6 +75,14 @@ public partial class App : Application
         if (_settings.ShowOnStartup)
             _mainWindow.Show();
 
+        // Build settings view model with currently available categories
+        _settingsViewModel = new SettingsViewModel(_settings, new List<ISettingsCategory>
+        {
+            new ConnectionSettingsCategory(_ipcClient, _tokenStorage),
+            new DisplaySettingsCategory(_settings),
+            new AppearanceSettingsCategory(_settings, _mainWindow, _themeService)
+        });
+
         // Hide/show overlay based on channel membership
         _overlayViewModel.PropertyChanged += (_, pe) =>
         {
@@ -94,11 +106,45 @@ public partial class App : Application
     protected override void OnExit(ExitEventArgs e)
     {
         _appCts.Cancel();
+        _settingsWindow?.Close();
         _themeService?.Dispose();
         _voiceService?.Dispose();
         _ = _ipcClient?.DisposeAsync();
         LogService.Info("DiscordChatOverlay exiting.");
         base.OnExit(e);
+    }
+
+    /// <summary>
+    /// Opens the settings window (or brings it to the foreground if already open).
+    /// Suspends click-through on the overlay while settings are open so the user
+    /// can interact with the position drag fields.
+    /// </summary>
+    public void ShowSettings()
+    {
+        if (_settingsWindow != null)
+        {
+            _settingsWindow.Activate();
+            return;
+        }
+
+        bool isDark = _themeService?.IsDarkMode ?? false;
+        _settingsWindow = new MaterialSettingsWindow(isDark);
+
+        if (_settingsViewModel != null)
+        {
+            foreach (var cat in _settingsViewModel.Categories)
+                _settingsWindow.RegisterCategory(cat);
+        }
+
+        _mainWindow?.SuspendClickThrough();
+
+        _settingsWindow.Closed += (_, _) =>
+        {
+            _settingsWindow = null;
+            _mainWindow?.RestoreClickThrough();
+        };
+
+        _settingsWindow.Show();
     }
 
     // ── Connection sequence ────────────────────────────────────────────────

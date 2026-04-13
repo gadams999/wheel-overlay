@@ -1,0 +1,252 @@
+using System;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using ComboBox = System.Windows.Controls.ComboBox;
+using HorizontalAlignment = System.Windows.HorizontalAlignment;
+using Orientation = System.Windows.Controls.Orientation;
+using TextBox = System.Windows.Controls.TextBox;
+using OpenDash.DiscordChatOverlay.Models;
+using OpenDash.OverlayCore.Models;
+using OpenDash.OverlayCore.Services;
+using OpenDash.OverlayCore.Settings;
+
+namespace OpenDash.DiscordChatOverlay.Settings;
+
+/// <summary>
+/// Appearance category: overlay position, opacity, color theme, and font size.
+/// All changes apply live; values are persisted on Save.
+/// </summary>
+public class AppearanceSettingsCategory : ISettingsCategory
+{
+    private readonly AppSettings  _settings;
+    private readonly MainWindow   _mainWindow;
+    private readonly ThemeService _themeService;
+
+    private TextBox?   _leftTextBox;
+    private TextBox?   _topTextBox;
+    private Slider?    _opacitySlider;
+    private TextBlock? _opacityLabel;
+    private ComboBox?  _themeComboBox;
+    private Slider?    _fontSizeSlider;
+    private TextBlock? _fontSizeLabel;
+
+    public string CategoryName => "Appearance";
+    public int SortOrder       => 30;
+
+    public AppearanceSettingsCategory(AppSettings settings, MainWindow mainWindow, ThemeService themeService)
+    {
+        _settings     = settings;
+        _mainWindow   = mainWindow;
+        _themeService = themeService;
+    }
+
+    public FrameworkElement CreateContent()
+    {
+        var panel = new StackPanel { Margin = new Thickness(16) };
+
+        // ── Position ───────────────────────────────────────────────────────
+
+        panel.Children.Add(MakeSectionHeader("Position"));
+
+        var posRow = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 16) };
+
+        posRow.Children.Add(new TextBlock
+        {
+            Text              = "Left:",
+            FontSize          = 14,
+            Width             = 36,
+            VerticalAlignment = VerticalAlignment.Center
+        });
+
+        _leftTextBox = new TextBox
+        {
+            Text   = _settings.WindowLeft.ToString("F0"),
+            Width  = 70,
+            Margin = new Thickness(0, 0, 16, 0)
+        };
+        _leftTextBox.GotFocus  += (_, _) => _mainWindow.SuspendClickThrough();
+        _leftTextBox.LostFocus += OnPositionLostFocus;
+        posRow.Children.Add(_leftTextBox);
+
+        posRow.Children.Add(new TextBlock
+        {
+            Text              = "Top:",
+            FontSize          = 14,
+            Width             = 36,
+            VerticalAlignment = VerticalAlignment.Center
+        });
+
+        _topTextBox = new TextBox
+        {
+            Text  = _settings.WindowTop.ToString("F0"),
+            Width = 70
+        };
+        _topTextBox.GotFocus  += (_, _) => _mainWindow.SuspendClickThrough();
+        _topTextBox.LostFocus += OnPositionLostFocus;
+        posRow.Children.Add(_topTextBox);
+
+        panel.Children.Add(posRow);
+
+        // ── Opacity ────────────────────────────────────────────────────────
+
+        panel.Children.Add(MakeSectionHeader("Opacity (%)"));
+
+        var opacityRow = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 4) };
+        _opacityLabel = new TextBlock
+        {
+            Text              = _settings.Opacity.ToString(),
+            FontSize          = 14,
+            Width             = 36,
+            VerticalAlignment = VerticalAlignment.Center
+        };
+        opacityRow.Children.Add(_opacityLabel);
+        panel.Children.Add(opacityRow);
+
+        _opacitySlider = new Slider
+        {
+            Minimum       = 10,
+            Maximum       = 100,
+            Value         = _settings.Opacity,
+            TickFrequency = 5,
+            SmallChange   = 1,
+            LargeChange   = 10,
+            Margin        = new Thickness(0, 0, 0, 16)
+        };
+        _opacitySlider.ValueChanged += (_, e) =>
+        {
+            int pct = (int)e.NewValue;
+            if (_opacityLabel != null) _opacityLabel.Text = pct.ToString();
+            _mainWindow.Opacity = pct / 100.0;
+        };
+        panel.Children.Add(_opacitySlider);
+
+        // ── Theme ──────────────────────────────────────────────────────────
+
+        panel.Children.Add(MakeSectionHeader("Color theme"));
+
+        _themeComboBox = new ComboBox { Width = 160, HorizontalAlignment = HorizontalAlignment.Left, Margin = new Thickness(0, 0, 0, 16) };
+        _themeComboBox.Items.Add(new ComboBoxItem { Content = "System default", Tag = ThemePreference.System });
+        _themeComboBox.Items.Add(new ComboBoxItem { Content = "Light",          Tag = ThemePreference.Light  });
+        _themeComboBox.Items.Add(new ComboBoxItem { Content = "Dark",           Tag = ThemePreference.Dark   });
+        _themeComboBox.SelectionChanged += OnThemeSelectionChanged;
+        panel.Children.Add(_themeComboBox);
+
+        // ── Font size ──────────────────────────────────────────────────────
+
+        panel.Children.Add(MakeSectionHeader("Font size (pt)"));
+
+        var fontRow = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 4) };
+        _fontSizeLabel = new TextBlock
+        {
+            Text              = _settings.FontSize.ToString(),
+            FontSize          = 14,
+            Width             = 36,
+            VerticalAlignment = VerticalAlignment.Center
+        };
+        fontRow.Children.Add(_fontSizeLabel);
+        panel.Children.Add(fontRow);
+
+        _fontSizeSlider = new Slider
+        {
+            Minimum       = 8,
+            Maximum       = 32,
+            Value         = _settings.FontSize,
+            TickFrequency = 1,
+            SmallChange   = 1,
+            LargeChange   = 4,
+            Margin        = new Thickness(0, 0, 0, 8)
+        };
+        _fontSizeSlider.ValueChanged += (_, e) =>
+        {
+            int pt = (int)e.NewValue;
+            if (_fontSizeLabel != null) _fontSizeLabel.Text = pt.ToString();
+            _mainWindow.FontSize = pt;
+        };
+        panel.Children.Add(_fontSizeSlider);
+
+        LoadValues();
+        return panel;
+    }
+
+    public void SaveValues()
+    {
+        // Position
+        if (double.TryParse(_leftTextBox?.Text, out double left))
+            _settings.WindowLeft = left;
+        if (double.TryParse(_topTextBox?.Text, out double top))
+            _settings.WindowTop = top;
+
+        // Opacity
+        if (_opacitySlider != null)
+            _settings.Opacity = (int)_opacitySlider.Value;
+
+        // Theme
+        if (_themeComboBox?.SelectedItem is ComboBoxItem item && item.Tag is ThemePreference pref)
+            _settings.ThemePreference = pref;
+
+        // Font size
+        if (_fontSizeSlider != null)
+            _settings.FontSize = (int)_fontSizeSlider.Value;
+
+        _settings.Save();
+    }
+
+    public void LoadValues()
+    {
+        if (_leftTextBox  != null) _leftTextBox.Text  = _settings.WindowLeft.ToString("F0");
+        if (_topTextBox   != null) _topTextBox.Text   = _settings.WindowTop.ToString("F0");
+
+        if (_opacitySlider != null)
+        {
+            _opacitySlider.Value = _settings.Opacity;
+            if (_opacityLabel != null) _opacityLabel.Text = _settings.Opacity.ToString();
+        }
+
+        if (_themeComboBox != null)
+        {
+            foreach (ComboBoxItem cbi in _themeComboBox.Items)
+            {
+                if (cbi.Tag is ThemePreference p && p == _settings.ThemePreference)
+                {
+                    _themeComboBox.SelectedItem = cbi;
+                    break;
+                }
+            }
+        }
+
+        if (_fontSizeSlider != null)
+        {
+            _fontSizeSlider.Value = _settings.FontSize;
+            if (_fontSizeLabel != null) _fontSizeLabel.Text = _settings.FontSize.ToString();
+        }
+    }
+
+    // ── Helpers ────────────────────────────────────────────────────────────
+
+    private void OnPositionLostFocus(object sender, RoutedEventArgs e)
+    {
+        if (double.TryParse(_leftTextBox?.Text, out double left))
+            _mainWindow.Left = left;
+        if (double.TryParse(_topTextBox?.Text, out double top))
+            _mainWindow.Top = top;
+
+        _mainWindow.RestoreClickThrough();
+    }
+
+    private void OnThemeSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (_themeComboBox?.SelectedItem is ComboBoxItem item && item.Tag is ThemePreference pref)
+        {
+            _themeService.Preference = pref;
+        }
+    }
+
+    private static TextBlock MakeSectionHeader(string text) => new()
+    {
+        Text       = text,
+        FontSize   = 14,
+        FontWeight = FontWeights.SemiBold,
+        Margin     = new Thickness(0, 0, 0, 6)
+    };
+}
