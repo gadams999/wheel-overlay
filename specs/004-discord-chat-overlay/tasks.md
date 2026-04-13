@@ -137,11 +137,11 @@
 
 ### Implementation for User Story 5
 
-- [ ] T035 [US5] Verify and wire live debounce threshold updates in `VoiceSessionService.cs` — ensure `VoiceSessionService` reads `AppSettings.DebounceThresholdMs` dynamically per-event (not cached at startup) so that adjusting the slider in `DisplaySettingsCategory` and saving takes effect immediately for the next `SPEAKING_START` event without requiring app restart; add `AppSettings` reference to `VoiceSessionService` constructor; confirm `DisplaySettingsCategory` (T026) debounce slider `Save()` triggers `AppSettings.Save()` and `VoiceSessionService` reads the updated value
+- [x] T035 [US5] Verify and wire live debounce threshold updates in `VoiceSessionService.cs` — ensure `VoiceSessionService` reads `AppSettings.DebounceThresholdMs` dynamically per-event (not cached at startup) so that adjusting the slider in `DisplaySettingsCategory` and saving takes effect immediately for the next `SPEAKING_START` event without requiring app restart; add `AppSettings` reference to `VoiceSessionService` constructor; confirm `DisplaySettingsCategory` (T026) debounce slider `Save()` triggers `AppSettings.Save()` and `VoiceSessionService` reads the updated value
 
 ### Property Tests for User Story 5
 
-- [ ] T036 [P] [US5] Create `tests/DiscordChatOverlay.Tests/Services/VoiceSessionServiceTests.cs` — four FsCheck property tests with `#if FAST_TESTS / #else` iteration guards:
+- [x] T036 [P] [US5] Create `tests/DiscordChatOverlay.Tests/Services/VoiceSessionServiceTests.cs` — four FsCheck property tests with `#if FAST_TESTS / #else` iteration guards:
   - `// Feature: Discord Chat Overlay, Property 1: debounce events shorter than threshold produce no state transition` — arbitrary threshold T in [1,1000] ms; simulate `SPEAKING_START` followed by `SPEAKING_STOP` after duration D where D < T; assert participant never reaches `Active` state (remains Idle/Debouncing)
   - `// Feature: Discord Chat Overlay, Property 2: debounce threshold elapsed transitions participant to Active` — arbitrary threshold T in [1,500] ms; simulate continuous `SPEAKING_START` for T+50 ms; assert participant reaches `Active` within 500 ms of debounce timer firing
   - `// Feature: Discord Chat Overlay, Property 3: opacity fade monotone during grace period` — arbitrary grace period G in [0.0,2.0] s; transition participant to `RecentlyActive`; advance the fade timer by N arbitrary ticks (each 33 ms); assert `ActiveSpeaker.Opacity` strictly decreases with each tick (monotone descent, never increases) until it reaches 0.0
