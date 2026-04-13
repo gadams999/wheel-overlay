@@ -83,9 +83,10 @@ public partial class App : Application
             {
                 // First run — full PKCE authorization flow
                 LogService.Info("App: No token found; starting authorization flow.");
-                var verifier = _tokenStorage.GeneratePkceVerifier();
-                var code     = await _ipcClient.SendAuthorize(ct);
-                bundle       = await _tokenStorage.ExchangeCode(code, verifier, GetClientId());
+                var verifier   = _tokenStorage.GeneratePkceVerifier();
+                var challenge  = _tokenStorage.GeneratePkceChallenge(verifier);
+                var code       = await _ipcClient.SendAuthorize(challenge, ct);
+                bundle         = await _tokenStorage.ExchangeCode(code, verifier, GetClientId());
                 _tokenStorage.WriteToken(bundle);
             }
             else if (_tokenStorage.IsTokenExpiredOrExpiringSoon(bundle))
@@ -174,5 +175,5 @@ public partial class App : Application
 
     // ── Helpers ────────────────────────────────────────────────────────────
 
-    private static string GetClientId() => "YOUR_CLIENT_ID_HERE";
+    private static string GetClientId() => "1488518361783603352";
 }

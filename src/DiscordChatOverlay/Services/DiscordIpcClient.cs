@@ -29,7 +29,7 @@ public record ChannelSelectEventArgs(string? ChannelId, string? GuildId);
 
 public sealed class DiscordIpcClient : IAsyncDisposable
 {
-    private const string ClientId = "YOUR_CLIENT_ID_HERE";
+    private const string ClientId = "1488518361783603352";
 
     private NamedPipeClientStream? _pipe;
     private CancellationTokenSource? _readCts;
@@ -98,15 +98,21 @@ public sealed class DiscordIpcClient : IAsyncDisposable
     // ── Auth commands ──────────────────────────────────────────────────────
 
     /// <summary>
-    /// Sends AUTHORIZE and awaits the authorization code from Discord's consent dialog.
+    /// Sends AUTHORIZE with a PKCE code challenge and awaits the authorization code from Discord's consent dialog.
     /// </summary>
-    public async Task<string> SendAuthorize(CancellationToken ct = default)
+    public async Task<string> SendAuthorize(string codeChallenge, CancellationToken ct = default)
     {
         var nonce = Guid.NewGuid().ToString();
         var payload = JsonSerializer.Serialize(new
         {
             cmd   = "AUTHORIZE",
-            args  = new { client_id = ClientId, scopes = new[] { "rpc", "rpc.voice.read", "identify" } },
+            args  = new
+            {
+                client_id             = ClientId,
+                scopes                = new[] { "rpc", "rpc.voice.read", "identify" },
+                code_challenge        = codeChallenge,
+                code_challenge_method = "S256",
+            },
             nonce = nonce
         });
 

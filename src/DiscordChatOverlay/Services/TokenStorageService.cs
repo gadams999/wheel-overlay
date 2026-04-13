@@ -103,7 +103,6 @@ public class TokenStorageService
             ["code"]          = code,
             ["code_verifier"] = verifier,
             ["client_id"]     = clientId,
-            ["redirect_uri"]  = string.Empty,
         };
 
         return await PostTokenRequest(form);

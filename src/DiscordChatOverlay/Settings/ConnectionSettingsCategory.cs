@@ -67,7 +67,8 @@ public class ConnectionSettingsCategory : ISettingsCategory
         try
         {
             var verifier   = _tokenStorage.GeneratePkceVerifier();
-            var code       = await _ipcClient.SendAuthorize();
+            var challenge  = _tokenStorage.GeneratePkceChallenge(verifier);
+            var code       = await _ipcClient.SendAuthorize(challenge);
             var bundle     = await _tokenStorage.ExchangeCode(code, verifier, GetClientId());
             _tokenStorage.WriteToken(bundle);
             await _ipcClient.SendAuthenticate(bundle.AccessToken);
@@ -112,6 +113,6 @@ public class ConnectionSettingsCategory : ISettingsCategory
     {
         // Returns the same constant used in DiscordIpcClient.
         // Update both if the client ID changes.
-        return "YOUR_CLIENT_ID_HERE";
+        return "1488518361783603352";
     }
 }
