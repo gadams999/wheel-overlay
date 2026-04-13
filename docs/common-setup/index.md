@@ -25,3 +25,17 @@ To proceed:
 2. Click **Run anyway**.
 
 This step is required once per installer version.
+
+## Game Display Mode Compatibility
+
+All OpenDash overlay applications use a standard Windows always-on-top window. This works correctly with **borderless windowed** mode, which is the default or recommended setting in most modern games and simulators.
+
+**Exclusive fullscreen mode is not supported.** When a game runs in exclusive fullscreen (also called DirectX fullscreen exclusive or fullscreen mode), it takes direct control of the display and Windows cannot render other windows — including overlays — on top of it. The overlay will not be visible.
+
+To use any OpenDash overlay alongside a game:
+
+1. Open your game or simulator's display settings.
+2. Set the display mode to **Borderless Windowed** (sometimes labelled "Borderless", "Windowed Borderless", or "Fullscreen Windowed").
+3. Restart the game if required.
+
+The overlay will then appear on top of the game as expected.
