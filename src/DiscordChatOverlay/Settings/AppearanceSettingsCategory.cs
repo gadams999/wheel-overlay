@@ -166,6 +166,11 @@ public class AppearanceSettingsCategory : ISettingsCategory
         panel.Children.Add(_fontSizeSlider);
 
         LoadValues();
+
+        // Keep position text boxes in sync whenever the overlay window moves (e.g. after dragging)
+        _mainWindow.LocationChanged += OnMainWindowLocationChanged;
+        panel.Unloaded += (_, _) => _mainWindow.LocationChanged -= OnMainWindowLocationChanged;
+
         return panel;
     }
 
@@ -223,6 +228,12 @@ public class AppearanceSettingsCategory : ISettingsCategory
     }
 
     // ── Helpers ────────────────────────────────────────────────────────────
+
+    private void OnMainWindowLocationChanged(object? sender, EventArgs e)
+    {
+        if (_leftTextBox != null) _leftTextBox.Text = _mainWindow.Left.ToString("F0");
+        if (_topTextBox  != null) _topTextBox.Text  = _mainWindow.Top.ToString("F0");
+    }
 
     private void OnPositionLostFocus(object sender, RoutedEventArgs e)
     {
