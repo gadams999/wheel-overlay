@@ -55,6 +55,20 @@ public class AppSettings
         set => _fontSize = Math.Clamp(value, 8, 32);
     }
 
+    private string _fontFamily = "Segoe UI";
+    public string FontFamily
+    {
+        get => _fontFamily;
+        set => _fontFamily = string.IsNullOrWhiteSpace(value) ? "Segoe UI" : value;
+    }
+
+    private string _fontColor = "#FFFFFF";
+    public string FontColor
+    {
+        get => _fontColor;
+        set => _fontColor = string.IsNullOrWhiteSpace(value) ? "#FFFFFF" : value;
+    }
+
     public bool ShowOnStartup { get; set; } = true;
 
     /// <summary>

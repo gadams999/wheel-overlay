@@ -11,6 +11,16 @@ public static class FontUtilities
     private static readonly System.Windows.Media.FontFamily _fallbackFontFamily = new("Segoe UI");
 
     /// <summary>
+    /// Curated list of common system fonts suitable for overlay use.
+    /// Shared across all overlay settings UIs.
+    /// </summary>
+    public static readonly string[] CuratedFonts =
+    {
+        "Segoe UI", "Arial", "Calibri", "Consolas", "Courier New",
+        "Tahoma", "Times New Roman", "Trebuchet MS", "Verdana"
+    };
+
+    /// <summary>
     /// Returns a WPF <see cref="System.Windows.Media.FontFamily"/> for the given family name.
     /// Falls back to Segoe UI for null, empty, or unrecognized names.
     /// Never returns null.

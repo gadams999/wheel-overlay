@@ -8,6 +8,7 @@ using OpenDash.DiscordChatOverlay.Models;
 using OpenDash.DiscordChatOverlay.Services;
 using OpenDash.DiscordChatOverlay.Settings;
 using OpenDash.DiscordChatOverlay.ViewModels;
+using OpenDash.OverlayCore.Resources.Fonts;
 using OpenDash.OverlayCore.Services;
 using OpenDash.OverlayCore.Settings;
 using WinForms = System.Windows.Forms;
@@ -77,6 +78,20 @@ public partial class App : Application
 
         // Apply saved opacity (AppSettings.Opacity is 10–100; WPF Opacity is 0.0–1.0)
         _mainWindow.Opacity = _settings.Opacity / 100.0;
+
+        // Apply saved font family
+        _mainWindow.FontFamily = FontUtilities.GetFontFamily(_settings.FontFamily);
+
+        // Apply saved font color
+        try
+        {
+            var color = (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(_settings.FontColor);
+            _mainWindow.Foreground = new System.Windows.Media.SolidColorBrush(color);
+        }
+        catch
+        {
+            _mainWindow.Foreground = System.Windows.Media.Brushes.White;
+        }
 
         if (_settings.ShowOnStartup)
             _mainWindow.Show();

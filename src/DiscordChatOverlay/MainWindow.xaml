@@ -5,6 +5,7 @@
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent"
+        Foreground="White"
         Topmost="True"
         ShowInTaskbar="True"
         SizeToContent="WidthAndHeight"
@@ -101,10 +102,9 @@
                             </Image.Visibility>
                         </Image>
 
-                        <!-- Display name -->
+                        <!-- Display name — Foreground inherits from Window (user-configurable) -->
                         <TextBlock Grid.Column="1"
                                    Text="{Binding DisplayName}"
-                                   Foreground="White"
                                    VerticalAlignment="Center"
                                    Margin="6,0,4,0"
                                    TextOptions.TextFormattingMode="Display"
