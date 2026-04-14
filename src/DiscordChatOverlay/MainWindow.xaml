@@ -10,6 +10,14 @@
         SizeToContent="WidthAndHeight"
         ResizeMode="NoResize">
 
+    <Window.Resources>
+        <!-- Declared here (not only in App.xaml) so StaticResource lookup inside
+             the DataTemplate is guaranteed to find them regardless of when
+             MaterialDesignBootstrap modifies Application.Resources.MergedDictionaries. -->
+        <conv:AvatarUrlConverter     x:Key="AvatarUrlConverter"/>
+        <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </Window.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
