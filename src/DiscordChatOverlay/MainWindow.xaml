@@ -80,10 +80,14 @@
                         </Grid.ColumnDefinitions>
 
                         <!-- Avatar image (Hidden not Collapsed to preserve column width per FR-014b-layout) -->
+                        <!-- Clip to circle to match Discord's rendering style; CDN delivers square images -->
                         <Image Grid.Column="0"
                                Width="28" Height="28"
                                VerticalAlignment="Center"
                                RenderOptions.BitmapScalingMode="HighQuality">
+                            <Image.Clip>
+                                <EllipseGeometry Center="14,14" RadiusX="14" RadiusY="14"/>
+                            </Image.Clip>
                             <Image.Source>
                                 <MultiBinding Converter="{StaticResource AvatarUrlConverter}">
                                     <Binding Path="GuildId"/>
