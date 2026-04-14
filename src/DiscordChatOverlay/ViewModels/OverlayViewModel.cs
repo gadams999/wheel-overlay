@@ -99,7 +99,7 @@ public class OverlayViewModel : INotifyPropertyChanged
     {
         if (Application.Current != null && !Application.Current.Dispatcher.CheckAccess())
         {
-            Application.Current.Dispatcher.Invoke(Rebuild);
+            Application.Current.Dispatcher.BeginInvoke(new Action(Rebuild));
             return;
         }
 

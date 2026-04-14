@@ -114,7 +114,7 @@ public class VoiceSessionService : INotifyPropertyChanged, IDisposable
         string? channelId, guildId;
         lock (_lock) { channelId = Session.ChannelId; guildId = Session.GuildId; }
 
-        Application.Current.Dispatcher.Invoke(() =>
+        Application.Current.Dispatcher.BeginInvoke(() =>
         {
             foreach (var speaker in ActiveSpeakers)
             {
@@ -170,7 +170,7 @@ public class VoiceSessionService : INotifyPropertyChanged, IDisposable
             }
 
             var speaker = BuildActiveSpeaker(snapshot, channelId, guildId);
-            Application.Current.Dispatcher.Invoke(() => ActiveSpeakers.Add(speaker));
+            _ = Application.Current.Dispatcher.BeginInvoke(() => ActiveSpeakers.Add(speaker));
 
             lock (_lock)
             {
@@ -219,7 +219,7 @@ public class VoiceSessionService : INotifyPropertyChanged, IDisposable
         }
 
         var speaker = BuildActiveSpeaker(snapshot, channelId, guildId);
-        Application.Current.Dispatcher.Invoke(() => ActiveSpeakers.Add(speaker));
+        Application.Current.Dispatcher.BeginInvoke(() => ActiveSpeakers.Add(speaker));
 
         lock (_lock)
         {
@@ -248,7 +248,7 @@ public class VoiceSessionService : INotifyPropertyChanged, IDisposable
             _alias.UpsertChannelMember(guildId, channelId, e.UserId, e.DisplayName);
 
         var resolvedName = _alias.Resolve(e.UserId, guildId ?? string.Empty, channelId, e.DisplayName);
-        Application.Current.Dispatcher.Invoke(() =>
+        Application.Current.Dispatcher.BeginInvoke(() =>
         {
             var existing = ActiveSpeakers.FirstOrDefault(s => s.UserId == e.UserId);
             if (existing != null)
@@ -267,7 +267,7 @@ public class VoiceSessionService : INotifyPropertyChanged, IDisposable
         }
         m?.Cancel();
 
-        Application.Current.Dispatcher.Invoke(() =>
+        Application.Current.Dispatcher.BeginInvoke(() =>
         {
             var existing = ActiveSpeakers.FirstOrDefault(s => s.UserId == e.UserId);
             if (existing != null) ActiveSpeakers.Remove(existing);
@@ -331,7 +331,7 @@ public class VoiceSessionService : INotifyPropertyChanged, IDisposable
             Session.Participants.Clear();
         }
         foreach (var m in machines) m.Cancel();
-        Application.Current.Dispatcher.Invoke(() => ActiveSpeakers.Clear());
+        Application.Current.Dispatcher.BeginInvoke(() => ActiveSpeakers.Clear());
     }
 
     private ActiveSpeaker BuildActiveSpeaker(ParticipantSnapshot snapshot, string? channelId, string? guildId)
@@ -494,7 +494,7 @@ public class VoiceSessionService : INotifyPropertyChanged, IDisposable
             }
 
             if (uiAction != null)
-                Application.Current.Dispatcher.Invoke(uiAction);
+                Application.Current.Dispatcher.BeginInvoke(uiAction);
         }
 
         public void OnSpeakingStop()
@@ -553,7 +553,7 @@ public class VoiceSessionService : INotifyPropertyChanged, IDisposable
             }
 
             if (uiAction != null)
-                Application.Current.Dispatcher.Invoke(uiAction);
+                Application.Current.Dispatcher.BeginInvoke(uiAction);
         }
 
         private void StartFade()
@@ -561,7 +561,7 @@ public class VoiceSessionService : INotifyPropertyChanged, IDisposable
             if (_settings.GracePeriodSeconds <= 0)
             {
                 lock (_lock) { _state = MachineState.Silent; }
-                Application.Current.Dispatcher.Invoke(() =>
+                Application.Current.Dispatcher.BeginInvoke(() =>
                 {
                     _speaker.Opacity = 0.0;
                     _speaker.State   = SpeakerState.Silent;
@@ -569,7 +569,7 @@ public class VoiceSessionService : INotifyPropertyChanged, IDisposable
                 return;
             }
 
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
                 // Re-check state on UI thread before starting timer
                 lock (_lock)
