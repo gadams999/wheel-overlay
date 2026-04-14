@@ -13,14 +13,24 @@ namespace OpenDash.DiscordChatOverlay.Services;
 /// </summary>
 public class AliasService
 {
-    private static readonly string AliasesPath = Path.Combine(
+    private static readonly string Default_aliasesPath = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "DiscordChatOverlay",
         "aliases.json");
 
     private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
 
+    private readonly string _aliasesPath;
     private List<ChannelContext> _contexts = new();
+
+    /// <summary>Creates an AliasService using the default %APPDATA% path.</summary>
+    public AliasService() : this(Default_aliasesPath) { }
+
+    /// <summary>Creates an AliasService using a custom path. Intended for testing.</summary>
+    internal AliasService(string aliasesPath)
+    {
+        _aliasesPath = aliasesPath;
+    }
 
     /// <summary>
     /// Loads aliases.json. Skips malformed entries and logs each skip.
@@ -30,12 +40,12 @@ public class AliasService
     {
         _contexts = new List<ChannelContext>();
 
-        if (!File.Exists(AliasesPath))
+        if (!File.Exists(_aliasesPath))
             return;
 
         try
         {
-            var json = File.ReadAllText(AliasesPath);
+            var json = File.ReadAllText(_aliasesPath);
             var raw = JsonSerializer.Deserialize<List<ChannelContext>>(json, JsonOptions);
             if (raw == null) return;
 
@@ -77,13 +87,13 @@ public class AliasService
     {
         try
         {
-            var dir = Path.GetDirectoryName(AliasesPath)!;
+            var dir = Path.GetDirectoryName(_aliasesPath)!;
             Directory.CreateDirectory(dir);
 
-            var tmp = AliasesPath + ".tmp";
+            var tmp = _aliasesPath + ".tmp";
             var json = JsonSerializer.Serialize(_contexts, JsonOptions);
             File.WriteAllText(tmp, json);
-            File.Move(tmp, AliasesPath, overwrite: true);
+            File.Move(tmp, _aliasesPath, overwrite: true);
         }
         catch (Exception ex)
         {

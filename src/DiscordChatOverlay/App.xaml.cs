@@ -87,6 +87,7 @@ public partial class App : Application
             new ConnectionSettingsCategory(_ipcClient, _tokenStorage),
             new DisplaySettingsCategory(_settings),
             new AppearanceSettingsCategory(_settings, _mainWindow, _themeService),
+            new AliasSettingsCategory(_aliasService, _voiceService),
             new AboutSettingsCategory()
         });
 

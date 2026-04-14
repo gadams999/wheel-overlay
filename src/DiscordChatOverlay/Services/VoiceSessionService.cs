@@ -105,6 +105,31 @@ public class VoiceSessionService : INotifyPropertyChanged, IDisposable
     /// <summary>Call after successful AUTHENTICATE to mark the session as Connected.</summary>
     public void SetConnected() => ConnectionState = ConnectionState.Connected;
 
+    /// <summary>
+    /// Re-resolves display names and AvatarVisible for all current ActiveSpeakers from AliasService.
+    /// Call after the user saves alias changes in AliasSettingsCategory so the overlay updates immediately.
+    /// </summary>
+    public void RefreshDisplayNames()
+    {
+        string? channelId, guildId;
+        lock (_lock) { channelId = Session.ChannelId; guildId = Session.GuildId; }
+
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            foreach (var speaker in ActiveSpeakers)
+            {
+                speaker.DisplayName   = _alias.Resolve(speaker.UserId, guildId ?? string.Empty, channelId ?? string.Empty, speaker.DisplayName);
+                if (guildId != null && channelId != null)
+                {
+                    var ctx    = _alias.GetContext(guildId, channelId);
+                    var member = ctx?.Members.FirstOrDefault(m => m.UserId == speaker.UserId);
+                    if (member != null)
+                        speaker.AvatarVisible = member.AvatarVisible;
+                }
+            }
+        });
+    }
+
     // ── Internal seeding ───────────────────────────────────────────────────
 
     private async Task SeedChannelAsync(
