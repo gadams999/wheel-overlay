@@ -43,6 +43,9 @@ public sealed class DiscordIpcClient : IAsyncDisposable
     private readonly System.Collections.Concurrent.ConcurrentDictionary<string, string>
         _guildNames = new();
 
+    // Completed when Discord sends the READY dispatch after HANDSHAKE
+    private readonly TaskCompletionSource _readyTcs = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
     // ── Public events ──────────────────────────────────────────────────────
 
     public event EventHandler<SpeakingEventArgs>?     SpeakingStart;
@@ -234,11 +237,18 @@ public sealed class DiscordIpcClient : IAsyncDisposable
 
     // ── Internals ──────────────────────────────────────────────────────────
 
+    /// <summary>
+    /// Waits until Discord sends the READY dispatch following a successful HANDSHAKE.
+    /// Must be awaited before sending AUTHENTICATE or any other command.
+    /// </summary>
+    public Task WaitForReadyAsync(CancellationToken ct) =>
+        _readyTcs.Task.WaitAsync(ct);
+
     private async Task SendHandshake(CancellationToken ct)
     {
         var payload = JsonSerializer.Serialize(new { v = 1, client_id = ClientId });
         await WriteFrameAsync(0, payload, ct);
-        // READY dispatch is handled in the read loop
+        // READY dispatch arrives asynchronously in the read loop and sets _readyTcs
     }
 
     private async Task WriteFrameAsync(uint opcode, string json, CancellationToken ct)
@@ -371,6 +381,13 @@ public sealed class DiscordIpcClient : IAsyncDisposable
         {
             switch (evt)
             {
+                case "READY":
+                {
+                    LogService.Info("DiscordIpcClient: READY received.");
+                    _readyTcs.TrySetResult();
+                    break;
+                }
+
                 case "SPEAKING_START":
                 {
                     var userId = data.GetProperty("user_id").GetString()!;

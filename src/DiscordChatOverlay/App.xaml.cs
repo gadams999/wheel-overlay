@@ -203,6 +203,9 @@ public partial class App : Application
         {
             await _ipcClient!.ConnectAsync(ct);
 
+            LogService.Info("App: waiting for Discord READY...");
+            await _ipcClient.WaitForReadyAsync(ct);
+
             var bundle = _tokenStorage!.ReadToken();
 
             if (bundle == null)
@@ -222,6 +225,7 @@ public partial class App : Application
                 _tokenStorage.WriteToken(bundle);
             }
 
+            LogService.Info("App: sending AUTHENTICATE...");
             await _ipcClient.SendAuthenticate(bundle.AccessToken, ct);
 
             // Subscribe global events
