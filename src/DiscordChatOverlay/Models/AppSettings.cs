@@ -34,7 +34,7 @@ public class AppSettings
     public ThemePreference ThemePreference { get; set; } = ThemePreference.System;
     public DisplayMode DisplayMode { get; set; } = DisplayMode.SpeakersOnly;
 
-    private double _gracePeriodSeconds = 2.0;
+    private double _gracePeriodSeconds = 1.0;
     public double GracePeriodSeconds
     {
         get => _gracePeriodSeconds;

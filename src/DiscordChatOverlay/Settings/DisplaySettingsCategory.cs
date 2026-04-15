@@ -41,6 +41,7 @@ public class DisplaySettingsCategory : ISettingsCategory
             Margin    = new Thickness(0, 0, 0, 4),
             IsChecked = _settings.DisplayMode == DisplayMode.SpeakersOnly
         };
+        _speakersOnlyRadio.SetResourceReference(RadioButton.ForegroundProperty, "ThemeForeground");
         panel.Children.Add(_speakersOnlyRadio);
 
         _allMembersRadio = new RadioButton
@@ -50,6 +51,7 @@ public class DisplaySettingsCategory : ISettingsCategory
             Margin    = new Thickness(0, 0, 0, 16),
             IsChecked = _settings.DisplayMode == DisplayMode.AllMembers
         };
+        _allMembersRadio.SetResourceReference(RadioButton.ForegroundProperty, "ThemeForeground");
         panel.Children.Add(_allMembersRadio);
 
         // ── Grace period (fade duration) ───────────────────────────────────

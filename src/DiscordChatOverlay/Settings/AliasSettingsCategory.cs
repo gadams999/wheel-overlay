@@ -93,13 +93,14 @@ public class AliasSettingsCategory : ISettingsCategory
 
         if (contexts.Count == 0)
         {
-            _contentPanel.Children.Add(new TextBlock
+            var emptyText = new TextBlock
             {
                 Text         = "No voice channel contexts recorded yet.\nJoin a Discord voice channel to auto-populate this list.",
                 TextWrapping = TextWrapping.Wrap,
-                Foreground   = System.Windows.Media.Brushes.Gray,
                 Margin       = new Thickness(0, 8, 0, 0)
-            });
+            };
+            emptyText.SetResourceReference(TextBlock.ForegroundProperty, "ThemeSubtext");
+            _contentPanel.Children.Add(emptyText);
             return;
         }
 
@@ -111,11 +112,12 @@ public class AliasSettingsCategory : ISettingsCategory
 
             var headerLabel = new TextBlock
             {
-                Text       = $"{ctx.GuildName} / {ctx.ChannelName}",
-                FontSize   = 14,
-                FontWeight = FontWeights.SemiBold,
+                Text              = $"{ctx.GuildName} / {ctx.ChannelName}",
+                FontSize          = 14,
+                FontWeight        = FontWeights.SemiBold,
                 VerticalAlignment = VerticalAlignment.Center
             };
+            headerLabel.SetResourceReference(TextBlock.ForegroundProperty, "ThemeForeground");
             DockPanel.SetDock(headerLabel, Dock.Left);
             headerRow.Children.Add(headerLabel);
 
@@ -126,6 +128,7 @@ public class AliasSettingsCategory : ISettingsCategory
                 Padding = new Thickness(6, 2, 6, 2),
                 HorizontalAlignment = HorizontalAlignment.Right
             };
+            deleteBtn.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignOutlinedButton");
             var capturedCtx = ctx;
             deleteBtn.Click += (_, _) => OnDeleteContext(capturedCtx);
             DockPanel.SetDock(deleteBtn, Dock.Right);
@@ -150,12 +153,13 @@ public class AliasSettingsCategory : ISettingsCategory
 
             if (ctx.Members.Count == 0)
             {
-                _contentPanel.Children.Add(new TextBlock
+                var noMembersText = new TextBlock
                 {
-                    Text       = "  (no members recorded)",
-                    Foreground = System.Windows.Media.Brushes.Gray,
-                    Margin     = new Thickness(0, 0, 0, 4)
-                });
+                    Text   = "  (no members recorded)",
+                    Margin = new Thickness(0, 0, 0, 4)
+                };
+                noMembersText.SetResourceReference(TextBlock.ForegroundProperty, "ThemeSubtext");
+                _contentPanel.Children.Add(noMembersText);
                 continue;
             }
 
@@ -173,17 +177,19 @@ public class AliasSettingsCategory : ISettingsCategory
                     VerticalAlignment = VerticalAlignment.Center,
                     TextTrimming      = TextTrimming.CharacterEllipsis
                 };
+                nameLabel.SetResourceReference(TextBlock.ForegroundProperty, "ThemeForeground");
                 Grid.SetColumn(nameLabel, 0);
                 row.Children.Add(nameLabel);
 
                 // Custom display name TextBox
                 var nameBox = new TextBox
                 {
-                    Text       = member.CustomDisplayName ?? string.Empty,
-                    MaxLength  = 100,
-                    Margin     = new Thickness(4, 0, 4, 0),
+                    Text          = member.CustomDisplayName ?? string.Empty,
+                    MaxLength     = 100,
+                    Margin        = new Thickness(4, 0, 4, 0),
                     AcceptsReturn = false
                 };
+                ApplyTextBoxStyle(nameBox, "Custom name");
                 Grid.SetColumn(nameBox, 1);
                 row.Children.Add(nameBox);
 
@@ -194,6 +200,7 @@ public class AliasSettingsCategory : ISettingsCategory
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment   = VerticalAlignment.Center
                 };
+                avatarCheck.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignCheckBox");
                 Grid.SetColumn(avatarCheck, 2);
                 row.Children.Add(avatarCheck);
 
@@ -206,11 +213,12 @@ public class AliasSettingsCategory : ISettingsCategory
 
         var saveBtn = new Button
         {
-            Content = "Save Aliases",
-            Margin  = new Thickness(0, 20, 0, 0),
-            Padding = new Thickness(12, 4, 12, 4),
+            Content             = "Save Aliases",
+            Margin              = new Thickness(0, 20, 0, 0),
+            Padding             = new Thickness(12, 4, 12, 4),
             HorizontalAlignment = HorizontalAlignment.Left
         };
+        saveBtn.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignRaisedButton");
         saveBtn.Click += (_, _) => SaveValues();
         _contentPanel.Children.Add(saveBtn);
     }
@@ -229,15 +237,24 @@ public class AliasSettingsCategory : ISettingsCategory
         LoadValues();
     }
 
+    // ── Style helpers ──────────────────────────────────────────────────────
+
+    private static void ApplyTextBoxStyle(TextBox textBox, string hint)
+    {
+        textBox.SetResourceReference(TextBox.ForegroundProperty, "ThemeForeground");
+        MaterialDesignThemes.Wpf.HintAssist.SetHint(textBox, hint);
+        textBox.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignTextBox");
+    }
+
     private static void AddColHeaderText(Grid grid, string text, int column)
     {
         var tb = new TextBlock
         {
             Text       = text,
             FontWeight = FontWeights.SemiBold,
-            FontSize   = 12,
-            Foreground = System.Windows.Media.Brushes.Gray
+            FontSize   = 12
         };
+        tb.SetResourceReference(TextBlock.ForegroundProperty, "ThemeSubtext");
         Grid.SetColumn(tb, column);
         grid.Children.Add(tb);
     }
