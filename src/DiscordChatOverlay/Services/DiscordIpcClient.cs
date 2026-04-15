@@ -39,6 +39,10 @@ public sealed class DiscordIpcClient : IAsyncDisposable
     private readonly System.Collections.Concurrent.ConcurrentDictionary<string, TaskCompletionSource<JsonElement>>
         _pending = new();
 
+    // guild ID → guild name, populated from the AUTHENTICATE response
+    private readonly System.Collections.Concurrent.ConcurrentDictionary<string, string>
+        _guildNames = new();
+
     // ── Public events ──────────────────────────────────────────────────────
 
     public event EventHandler<SpeakingEventArgs>?     SpeakingStart;
@@ -47,6 +51,7 @@ public sealed class DiscordIpcClient : IAsyncDisposable
     public event EventHandler<VoiceStateEventArgs>?   VoiceStateUpdated;
     public event EventHandler<VoiceStateDeletedArgs>? VoiceStateDeleted;
     public event EventHandler<ChannelSelectEventArgs>? VoiceChannelSelected;
+    public event EventHandler<string>?                VoiceConnectionStatusChanged;
     public event EventHandler?                        AuthRevoked;
     public event EventHandler?                        ConnectionDropped;
 
@@ -140,9 +145,34 @@ public sealed class DiscordIpcClient : IAsyncDisposable
         var tcs = RegisterPending(nonce);
         await WriteFrameAsync(1, payload, ct);
 
-        // The response is dispatched in the read loop; we just wait for nonce resolution
-        await tcs.Task.WaitAsync(ct);
+        var response = await tcs.Task.WaitAsync(ct);
+
+        // AUTHENTICATE response includes data.guilds — cache names for later lookup
+        try
+        {
+            if (response.TryGetProperty("data", out var data) &&
+                data.TryGetProperty("guilds", out var guilds) &&
+                guilds.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var g in guilds.EnumerateArray())
+                {
+                    var id   = g.TryGetProperty("id",   out var idEl)   ? idEl.GetString()   : null;
+                    var name = g.TryGetProperty("name", out var nameEl) ? nameEl.GetString() : null;
+                    if (id != null && name != null)
+                        _guildNames[id] = name;
+                }
+                LogService.Info($"DiscordIpcClient: cached {_guildNames.Count} guild name(s) from AUTHENTICATE response.");
+            }
+        }
+        catch (Exception ex)
+        {
+            LogService.Error("DiscordIpcClient: Failed to parse guild names from AUTHENTICATE response.", ex);
+        }
     }
+
+    /// <summary>Returns the guild name for the given guild ID, or null if not cached.</summary>
+    public string? GetGuildName(string? guildId) =>
+        guildId != null && _guildNames.TryGetValue(guildId, out var name) ? name : null;
 
     // ── Subscription ───────────────────────────────────────────────────────
 
@@ -383,8 +413,8 @@ public sealed class DiscordIpcClient : IAsyncDisposable
                 }
                 case "VOICE_CONNECTION_STATUS":
                 {
-                    var state = data.TryGetProperty("state", out var s) ? s.GetString() : "?";
-                    LogService.Info($"DiscordIpcClient: VOICE_CONNECTION_STATUS = {state}");
+                    var state = data.TryGetProperty("state", out var s) ? s.GetString() ?? "?" : "?";
+                    Task.Run(() => VoiceConnectionStatusChanged?.Invoke(this, state));
                     break;
                 }
             }

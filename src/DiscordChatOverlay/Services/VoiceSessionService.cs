@@ -29,6 +29,7 @@ public class VoiceSessionService : INotifyPropertyChanged, IDisposable
 
     private readonly Dictionary<string, SpeakerStateMachine> _machines = new();
     private readonly object _lock = new();
+    private string? _lastVoiceConnectionStatus;
 
     public VoiceSession Session { get; } = new();
 
@@ -55,14 +56,15 @@ public class VoiceSessionService : INotifyPropertyChanged, IDisposable
         _alias    = alias;
         _settings = settings;
 
-        ipc.SpeakingStart       += OnSpeakingStart;
-        ipc.SpeakingStop        += OnSpeakingStop;
-        ipc.VoiceStateCreated   += OnVoiceStateCreated;
-        ipc.VoiceStateUpdated   += OnVoiceStateUpdated;
-        ipc.VoiceStateDeleted   += OnVoiceStateDeleted;
-        ipc.VoiceChannelSelected+= OnVoiceChannelSelected;
-        ipc.ConnectionDropped   += OnConnectionDropped;
-        ipc.AuthRevoked         += OnAuthRevoked;
+        ipc.SpeakingStart              += OnSpeakingStart;
+        ipc.SpeakingStop               += OnSpeakingStop;
+        ipc.VoiceStateCreated          += OnVoiceStateCreated;
+        ipc.VoiceStateUpdated          += OnVoiceStateUpdated;
+        ipc.VoiceStateDeleted          += OnVoiceStateDeleted;
+        ipc.VoiceChannelSelected       += OnVoiceChannelSelected;
+        ipc.VoiceConnectionStatusChanged += OnVoiceConnectionStatusChanged;
+        ipc.ConnectionDropped          += OnConnectionDropped;
+        ipc.AuthRevoked                += OnAuthRevoked;
     }
 
     // ── Public API ─────────────────────────────────────────────────────────
@@ -85,7 +87,7 @@ public class VoiceSessionService : INotifyPropertyChanged, IDisposable
             var guildId     = data.TryGetProperty("guild_id", out var gEl) && gEl.ValueKind != JsonValueKind.Null
                               ? gEl.GetString() : null;
             var channelName = data.TryGetProperty("name", out var nEl) ? nEl.GetString() : null;
-            var guildName   = ExtractGuildName(data);
+            var guildName   = ExtractGuildName(data) ?? _ipc.GetGuildName(guildId);
 
             lock (_lock)
             {
@@ -325,7 +327,7 @@ public class VoiceSessionService : INotifyPropertyChanged, IDisposable
                 if (!channelData.HasValue) return;
 
                 var channelName = channelData.Value.TryGetProperty("name", out var nEl) ? nEl.GetString() : null;
-                var guildName   = ExtractGuildName(channelData.Value);
+                var guildName   = ExtractGuildName(channelData.Value) ?? _ipc.GetGuildName(e.GuildId);
 
                 lock (_lock) { Session.ChannelName = channelName; Session.GuildName = guildName; }
 
@@ -355,6 +357,33 @@ public class VoiceSessionService : INotifyPropertyChanged, IDisposable
         lock (_lock) { Session.ChannelId = null; Session.GuildId = null; Session.GuildName = null; }
         ClearAllParticipants();
         ConnectionState = ConnectionState.Failed;
+    }
+
+    private void OnVoiceConnectionStatusChanged(object? sender, string state)
+    {
+        // Suppress repeated identical states (Discord sends VOICE_CONNECTED every ~5s as a keepalive)
+        if (state == _lastVoiceConnectionStatus) return;
+        _lastVoiceConnectionStatus = state;
+
+        string? channelId, channelName, guildId, guildName;
+        lock (_lock)
+        {
+            channelId   = Session.ChannelId;
+            channelName = Session.ChannelName;
+            guildId     = Session.GuildId;
+            guildName   = Session.GuildName ?? _ipc.GetGuildName(guildId);
+        }
+
+        if (state == "VOICE_CONNECTED")
+            LogService.Info(
+                $"VoiceSessionService: voice connected — " +
+                FormatGuildChannel(guildId, guildName, channelId, channelName));
+        else if (state is "DISCONNECTED" or "VOICE_DISCONNECTED")
+            LogService.Info(
+                $"VoiceSessionService: voice disconnected — " +
+                FormatGuildChannel(guildId, guildName, channelId, channelName));
+        else
+            LogService.Info($"VoiceSessionService: voice connection status = {state}");
     }
 
     // ── Helpers ────────────────────────────────────────────────────────────
@@ -467,14 +496,15 @@ public class VoiceSessionService : INotifyPropertyChanged, IDisposable
         _cts.Cancel();
 
         // Unwire IPC events to prevent callbacks after disposal
-        _ipc.SpeakingStart        -= OnSpeakingStart;
-        _ipc.SpeakingStop         -= OnSpeakingStop;
-        _ipc.VoiceStateCreated    -= OnVoiceStateCreated;
-        _ipc.VoiceStateUpdated    -= OnVoiceStateUpdated;
-        _ipc.VoiceStateDeleted    -= OnVoiceStateDeleted;
-        _ipc.VoiceChannelSelected -= OnVoiceChannelSelected;
-        _ipc.ConnectionDropped    -= OnConnectionDropped;
-        _ipc.AuthRevoked          -= OnAuthRevoked;
+        _ipc.SpeakingStart               -= OnSpeakingStart;
+        _ipc.SpeakingStop                -= OnSpeakingStop;
+        _ipc.VoiceStateCreated           -= OnVoiceStateCreated;
+        _ipc.VoiceStateUpdated           -= OnVoiceStateUpdated;
+        _ipc.VoiceStateDeleted           -= OnVoiceStateDeleted;
+        _ipc.VoiceChannelSelected        -= OnVoiceChannelSelected;
+        _ipc.VoiceConnectionStatusChanged -= OnVoiceConnectionStatusChanged;
+        _ipc.ConnectionDropped           -= OnConnectionDropped;
+        _ipc.AuthRevoked                 -= OnAuthRevoked;
 
         List<SpeakerStateMachine> machines;
         lock (_lock)
