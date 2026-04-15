@@ -93,6 +93,10 @@ public class VoiceSessionService : INotifyPropertyChanged, IDisposable
                 Session.ChannelName = channelName;
             }
 
+            LogService.Info(
+                $"VoiceSessionService: already in voice channel at startup — " +
+                $"guild={guildId ?? "?"} channel=\"{channelName ?? channelId}\" ({channelId})");
+
             await SeedChannelAsync(channelId, guildId, channelName, data, ct);
         }
         catch (OperationCanceledException) { }
@@ -137,7 +141,14 @@ public class VoiceSessionService : INotifyPropertyChanged, IDisposable
         JsonElement channelData, CancellationToken ct)
     {
         if (guildId != null)
+        {
             _alias.UpsertChannelContext(guildId, guildId, channelId, channelName ?? "?");
+            LogService.Info($"VoiceSessionService: seeding channel — guild={guildId} channel=\"{channelName ?? channelId}\" ({channelId})");
+        }
+        else
+        {
+            LogService.Info($"VoiceSessionService: seeding channel — channel=\"{channelName ?? channelId}\" ({channelId}) [no guild]");
+        }
 
         // Subscribe channel-scoped events
         try
@@ -276,12 +287,36 @@ public class VoiceSessionService : INotifyPropertyChanged, IDisposable
 
     private void OnVoiceChannelSelected(object? sender, ChannelSelectEventArgs e)
     {
+        // Capture old channel for leave-log before overwriting session
+        string? oldChannelId, oldChannelName, oldGuildId;
+        lock (_lock)
+        {
+            oldChannelId   = Session.ChannelId;
+            oldChannelName = Session.ChannelName;
+            oldGuildId     = Session.GuildId;
+        }
+
+        if (oldChannelId != null && e.ChannelId != oldChannelId)
+        {
+            LogService.Info(
+                $"VoiceSessionService: left voice channel — " +
+                $"guild={oldGuildId ?? "?"} channel=\"{oldChannelName ?? oldChannelId}\" ({oldChannelId})");
+        }
+
         // Update session state BEFORE clearing so ViewModel sees the new ChannelId
         lock (_lock) { Session.ChannelId = e.ChannelId; Session.GuildId = e.GuildId; }
 
         ClearAllParticipants();
 
-        if (e.ChannelId == null) return;
+        if (e.ChannelId == null)
+        {
+            LogService.Info("VoiceSessionService: left voice channel — no longer in any channel.");
+            return;
+        }
+
+        LogService.Info(
+            $"VoiceSessionService: joining voice channel — " +
+            $"guild={e.GuildId ?? "?"} channelId={e.ChannelId} (name will follow)");
 
         _ = Task.Run(async () =>
         {
@@ -293,6 +328,11 @@ public class VoiceSessionService : INotifyPropertyChanged, IDisposable
                                   ? nEl.GetString() : null;
 
                 lock (_lock) { Session.ChannelName = channelName; }
+
+                if (channelName != null)
+                    LogService.Info(
+                        $"VoiceSessionService: joined voice channel — " +
+                        $"guild={e.GuildId ?? "?"} channel=\"{channelName}\" ({e.ChannelId})");
 
                 if (channelData.HasValue)
                     await SeedChannelAsync(e.ChannelId, e.GuildId, channelName, channelData.Value, ct);
