@@ -164,7 +164,8 @@ public sealed class DiscordIpcClient : IAsyncDisposable
                     if (id != null && name != null)
                         _guildNames[id] = name;
                 }
-                LogService.Info($"DiscordIpcClient: cached {_guildNames.Count} guild name(s) from AUTHENTICATE response.");
+                if (_guildNames.Count > 0)
+                    LogService.Info($"DiscordIpcClient: cached {_guildNames.Count} guild name(s) from AUTHENTICATE response.");
             }
         }
         catch (Exception ex)

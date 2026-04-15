@@ -145,7 +145,7 @@ public class VoiceSessionService : INotifyPropertyChanged, IDisposable
         JsonElement channelData, CancellationToken ct)
     {
         if (guildId != null)
-            _alias.UpsertChannelContext(guildId, guildName ?? guildId, channelId, channelName ?? channelId);
+            _alias.UpsertChannelContext(guildId, guildName ?? string.Empty, channelId, channelName ?? channelId);
 
         LogService.Info(
             $"VoiceSessionService: seeding channel — " +
@@ -484,8 +484,12 @@ public class VoiceSessionService : INotifyPropertyChanged, IDisposable
     private static string FormatGuildChannel(
         string? guildId, string? guildName, string? channelId, string? channelName)
     {
-        var guild   = guildId   != null ? $"guild=\"{guildName ?? "?"}\" ({guildId})" : "guild=none";
-        var channel = channelId != null ? $"channel=\"{channelName ?? "?"}\" ({channelId})" : "channel=none";
+        var guild = guildId != null
+            ? (guildName != null ? $"guild=\"{guildName}\" ({guildId})" : $"guild=({guildId})")
+            : "guild=none";
+        var channel = channelId != null
+            ? (channelName != null ? $"channel=\"{channelName}\" ({channelId})" : $"channel=({channelId})")
+            : "channel=none";
         return $"{guild} {channel}";
     }
 
