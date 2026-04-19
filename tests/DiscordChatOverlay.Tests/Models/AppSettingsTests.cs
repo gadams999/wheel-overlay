@@ -31,26 +31,22 @@ public class AppSettingsTests
         var fontSizeGen          = Gen.Choose(8, 32);
         var themeGen             = Arb.From<ThemePreference>().Generator;
         var displayModeGen       = Arb.From<DisplayMode>().Generator;
-        var showOnStartupGen     = Arb.From<bool>().Generator;
-
-        var settingsGen = from opacity       in opacityGen
-                         from grace         in graceGen
-                         from debounce      in debounceGen
-                         from fontSize      in fontSizeGen
-                         from theme         in themeGen
-                         from displayMode   in displayModeGen
-                         from showOnStartup in showOnStartupGen
+        var settingsGen = from opacity     in opacityGen
+                         from grace       in graceGen
+                         from debounce    in debounceGen
+                         from fontSize    in fontSizeGen
+                         from theme       in themeGen
+                         from displayMode in displayModeGen
                          select new AppSettings
                          {
-                             WindowLeft         = 20.0,
-                             WindowTop          = 20.0,
-                             Opacity            = opacity,
-                             GracePeriodSeconds = grace,
-                             DebounceThresholdMs= debounce,
-                             FontSize           = fontSize,
-                             ThemePreference    = theme,
-                             DisplayMode        = displayMode,
-                             ShowOnStartup      = showOnStartup,
+                             WindowLeft          = 20.0,
+                             WindowTop           = 20.0,
+                             Opacity             = opacity,
+                             GracePeriodSeconds  = grace,
+                             DebounceThresholdMs = debounce,
+                             FontSize            = fontSize,
+                             ThemePreference     = theme,
+                             DisplayMode         = displayMode,
                          };
 
         return Prop.ForAll(Arb.From(settingsGen), original =>
@@ -63,8 +59,7 @@ public class AppSettingsTests
                     restored.DebounceThresholdMs == original.DebounceThresholdMs &&
                     restored.FontSize            == original.FontSize            &&
                     restored.ThemePreference     == original.ThemePreference     &&
-                    restored.DisplayMode         == original.DisplayMode         &&
-                    restored.ShowOnStartup       == original.ShowOnStartup)
+                    restored.DisplayMode         == original.DisplayMode)
                 .Label($"Round-trip mismatch: JSON={json}");
         });
     }
