@@ -62,6 +62,8 @@ public class AppSettings
         set => _fontFamily = string.IsNullOrWhiteSpace(value) ? "Segoe UI" : value;
     }
 
+    public bool FontBold { get; set; } = false;
+
     private string _fontColor = "#FFFFFF";
     public string FontColor
     {

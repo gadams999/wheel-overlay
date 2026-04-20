@@ -83,6 +83,9 @@ public partial class App : Application
         _mainWindow.FontFamily = FontUtilities.GetFontFamily(_settings.FontFamily);
         _mainWindow.FontSize   = _settings.FontSize;
 
+        // Apply saved font weight
+        _mainWindow.FontWeight = _settings.FontBold ? FontWeights.Bold : FontWeights.Normal;
+
         // Apply saved font color
         try
         {

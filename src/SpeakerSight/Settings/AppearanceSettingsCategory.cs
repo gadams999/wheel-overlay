@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using Button = System.Windows.Controls.Button;
+using CheckBox = System.Windows.Controls.CheckBox;
 using ComboBox = System.Windows.Controls.ComboBox;
 using HorizontalAlignment = System.Windows.HorizontalAlignment;
 using Orientation = System.Windows.Controls.Orientation;
@@ -35,6 +36,7 @@ public class AppearanceSettingsCategory : ISettingsCategory
     private ComboBox?  _fontFamilyComboBox;
     private Slider?    _fontSizeSlider;
     private TextBlock? _fontSizeLabel;
+    private CheckBox?  _boldCheckBox;
     private TextBox?   _fontColorTextBox;
     private TextBox?   _backgroundColorTextBox;
     private Slider?    _spacingSlider;
@@ -144,6 +146,18 @@ public class AppearanceSettingsCategory : ISettingsCategory
         };
         panel.Children.Add(_fontSizeSlider);
 
+        // ── Bold ──────────────────────────────────────────────────────────
+
+        _boldCheckBox = new CheckBox { Content = "Bold", Margin = new Thickness(0, 0, 0, 16) };
+        _boldCheckBox.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignCheckBox");
+        _boldCheckBox.SetResourceReference(CheckBox.ForegroundProperty, "ThemeForeground");
+        _boldCheckBox.Click += (_, _) =>
+        {
+            bool bold = _boldCheckBox.IsChecked == true;
+            _mainWindow.FontWeight = bold ? FontWeights.Bold : FontWeights.Normal;
+        };
+        panel.Children.Add(_boldCheckBox);
+
         // ── Font color ─────────────────────────────────────────────────────
 
         panel.Children.Add(MakeSectionHeader("Font color"));
@@ -206,6 +220,10 @@ public class AppearanceSettingsCategory : ISettingsCategory
         if (_fontSizeSlider != null)
             _settings.FontSize = (int)_fontSizeSlider.Value;
 
+        // Bold
+        if (_boldCheckBox != null)
+            _settings.FontBold = _boldCheckBox.IsChecked == true;
+
         // Font color
         if (_fontColorTextBox != null)
             _settings.FontColor = _fontColorTextBox.Text;
@@ -263,6 +281,9 @@ public class AppearanceSettingsCategory : ISettingsCategory
             _fontSizeSlider.Value = _settings.FontSize;
             if (_fontSizeLabel != null) _fontSizeLabel.Text = _settings.FontSize.ToString();
         }
+
+        if (_boldCheckBox != null)
+            _boldCheckBox.IsChecked = _settings.FontBold;
 
         if (_fontColorTextBox != null)
             _fontColorTextBox.Text = _settings.FontColor;
