@@ -12,13 +12,25 @@ public static class FontUtilities
 {
     private static readonly System.Windows.Media.FontFamily _fallbackFontFamily = new("Segoe UI");
 
-    // Fonts bundled as resources in this assembly (pack URI → WPF FontFamily).
-    private static readonly Dictionary<string, System.Windows.Media.FontFamily> _embeddedFonts = new(StringComparer.OrdinalIgnoreCase)
-    {
-        ["DM Sans"] = new System.Windows.Media.FontFamily(
-            new Uri("pack://application:,,,/"),
-            "/OverlayCore;component/Resources/Fonts/#DM Sans")
-    };
+    // Lazy: pack:// URI is only valid once a WPF Application is running.
+    // In test runners (no Application) the factory catches and returns an empty dict.
+    private static readonly Lazy<Dictionary<string, System.Windows.Media.FontFamily>> _embeddedFonts =
+        new(() =>
+        {
+            try
+            {
+                return new Dictionary<string, System.Windows.Media.FontFamily>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["DM Sans"] = new System.Windows.Media.FontFamily(
+                        new Uri("pack://application:,,,/"),
+                        "/OverlayCore;component/Resources/Fonts/#DM Sans")
+                };
+            }
+            catch
+            {
+                return new Dictionary<string, System.Windows.Media.FontFamily>(StringComparer.OrdinalIgnoreCase);
+            }
+        });
 
     /// <summary>
     /// Curated list of fonts available in the overlay font picker.
@@ -42,7 +54,7 @@ public static class FontUtilities
         if (string.IsNullOrWhiteSpace(familyName))
             return _fallbackFontFamily;
 
-        if (_embeddedFonts.TryGetValue(familyName, out var embedded))
+        if (_embeddedFonts.Value.TryGetValue(familyName, out var embedded))
             return embedded;
 
         try
