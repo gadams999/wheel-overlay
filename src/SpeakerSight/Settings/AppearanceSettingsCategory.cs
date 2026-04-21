@@ -143,6 +143,7 @@ public class AppearanceSettingsCategory : ISettingsCategory
             int pt = (int)e.NewValue;
             if (_fontSizeLabel != null) _fontSizeLabel.Text = pt.ToString();
             _mainWindow.FontSize = pt;
+            _mainWindow.RecomputeDimensions(pt);
         };
         panel.Children.Add(_fontSizeSlider);
 

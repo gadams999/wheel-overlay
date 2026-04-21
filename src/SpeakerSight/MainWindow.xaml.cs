@@ -1,8 +1,10 @@
 using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
+using System.Windows.Media;
 using OpenDash.SpeakerSight.ViewModels;
 
 namespace OpenDash.SpeakerSight;
@@ -58,11 +60,41 @@ public partial class MainWindow : Window
     {
         _hwnd = new WindowInteropHelper(this).Handle;
 
+        RecomputeDimensions((int)FontSize);
+
         // Apply initial state — auth banner may already be required
         if (_viewModel.IsAuthRequired)
             SuspendClickThrough();
         else
             ApplyClickThrough();
+    }
+
+    /// <summary>
+    /// Sets explicit window dimensions based on <paramref name="fontSize"/> so the overlay
+    /// always fits exactly 8 rows at the widest 32-char glyph width (FR-016).
+    /// </summary>
+    public void RecomputeDimensions(int fontSize)
+    {
+        const double avatarColumnWidth = 32.0;
+        const double columnGap        = 8.0;
+        const double interRowSpacing  = 4.0;
+
+        double pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
+        var typeface = new Typeface(FontFamily, FontStyles.Normal, FontWeight, FontStretches.Normal);
+        var ft = new FormattedText(
+            "W",
+            CultureInfo.CurrentCulture,
+            System.Windows.FlowDirection.LeftToRight,
+            typeface,
+            fontSize,
+            System.Windows.Media.Brushes.Black,
+            pixelsPerDip);
+
+        double nameColumnWidth = 32 * ft.WidthIncludingTrailingWhitespace;
+
+        SizeToContent = SizeToContent.Manual;
+        Width  = avatarColumnWidth + columnGap + nameColumnWidth;
+        Height = 8 * (ft.Height + interRowSpacing);
     }
 
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)

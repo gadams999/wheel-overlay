@@ -180,8 +180,14 @@ public partial class App : Application
 
         _mainWindow?.EnableDragMode();
 
+        if (_overlayViewModel != null)
+            _overlayViewModel.IsPreviewMode = true;
+
         _settingsWindow.Closed += (_, _) =>
         {
+            if (_overlayViewModel != null)
+                _overlayViewModel.IsPreviewMode = false;
+
             _settingsWindow = null;
             _mainWindow?.DisableDragMode();
 

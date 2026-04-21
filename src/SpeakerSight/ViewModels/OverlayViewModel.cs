@@ -49,6 +49,20 @@ public class OverlayViewModel : INotifyPropertyChanged
         private set { if (_isAuthRequired != value) { _isAuthRequired = value; OnPropertyChanged(); } }
     }
 
+    private bool _isPreviewMode;
+    public bool IsPreviewMode
+    {
+        get => _isPreviewMode;
+        set
+        {
+            if (_isPreviewMode == value) return;
+            _isPreviewMode = value;
+            OnPropertyChanged();
+            if (value) EnterPreviewMode();
+            else       ExitPreviewMode();
+        }
+    }
+
     /// <summary>Fired when the user clicks the auth-required banner on the overlay.</summary>
     public event EventHandler? ReAuthorizationRequested;
 
@@ -79,6 +93,8 @@ public class OverlayViewModel : INotifyPropertyChanged
 
     private void OnSourceCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
+        if (_isPreviewMode) return;
+
         if (e.NewItems != null)
             foreach (ActiveSpeaker s in e.NewItems) s.PropertyChanged += OnSpeakerPropertyChanged;
         if (e.OldItems != null)
@@ -139,6 +155,44 @@ public class OverlayViewModel : INotifyPropertyChanged
             ActiveSpeakers.RemoveAt(ActiveSpeakers.Count - 1);
 
         IsInChannel = _voiceService.Session.ChannelId != null;
+    }
+
+    // ── Preview mode (FR-016a) ────────────────────────────────────────────
+
+    private static readonly SpeakerState[] PreviewStates =
+    [
+        SpeakerState.Active, SpeakerState.Active, SpeakerState.Active, SpeakerState.Active, SpeakerState.Active,
+        SpeakerState.RecentlyActive, SpeakerState.RecentlyActive, SpeakerState.RecentlyActive
+    ];
+    private static readonly double[] PreviewOpacities = [ 1.0, 1.0, 1.0, 1.0, 1.0, 0.7, 0.5, 0.3 ];
+
+    private void EnterPreviewMode()
+    {
+        _voiceService.ActiveSpeakers.CollectionChanged -= OnSourceCollectionChanged;
+        ((INotifyPropertyChanged)_voiceService).PropertyChanged -= OnVoiceServicePropertyChanged;
+
+        ActiveSpeakers.Clear();
+        for (int i = 0; i < 8; i++)
+        {
+            ActiveSpeakers.Add(new ActiveSpeaker
+            {
+                UserId      = $"preview-{i}",
+                DisplayName = $"Speaker {i + 1}",
+                State       = PreviewStates[i],
+                Opacity     = PreviewOpacities[i],
+                AvatarVisible = false
+            });
+        }
+        OverflowCount = 0;
+        IsInChannel   = true;
+    }
+
+    private void ExitPreviewMode()
+    {
+        _voiceService.ActiveSpeakers.CollectionChanged += OnSourceCollectionChanged;
+        ((INotifyPropertyChanged)_voiceService).PropertyChanged += OnVoiceServicePropertyChanged;
+
+        Rebuild();
     }
 
     // ── Pure ordering + capping logic (testable) ───────────────────────────
