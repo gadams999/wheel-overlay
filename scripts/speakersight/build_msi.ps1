@@ -45,8 +45,9 @@ New-Item -ItemType Directory -Path $packageDir | Out-Null
 Write-Host "  Copying all published files..." -ForegroundColor Gray
 Copy-Item "$publishDir\*" -Destination $packageDir -Recurse -Force -Exclude "*.pdb"
 
-# Copy LICENSE.txt from root
+# Copy license files from root
 Copy-Item ".\LICENSE.txt" -Destination $packageDir -Force
+Copy-Item ".\LICENSE.rtf" -Destination $packageDir -Force
 
 # Copy installer WiX source files into Package/
 Write-Host "  Copying installer sources into Package/..." -ForegroundColor Gray
@@ -68,7 +69,7 @@ Copy-Item -Path "$assetsDir\app.ico" -Destination $packageDir -Force -ErrorActio
 # Generate WiX components for all files
 Write-Host "  Generating WiX components..." -ForegroundColor Gray
 $allFiles = Get-ChildItem $packageDir -File
-$files = $allFiles | Where-Object { $_.Extension -notin @('.wxs', '.msi', '.wixpdb') }
+$files = $allFiles | Where-Object { $_.Extension -notin @('.wxs', '.msi', '.wixpdb', '.rtf') }
 $components = @()
 foreach ($file in $files) {
     $components += "      <Component>`n        <File Source=`"$($file.Name)`" />`n      </Component>"
@@ -120,6 +121,11 @@ if (-not $wixCmd) {
 # Register WixUI extension in this directory's .wix context
 Write-Host "  Registering WixToolset.UI.wixext..." -ForegroundColor Gray
 wix extension add WixToolset.UI.wixext/4.0.5
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "ERROR: Failed to register WixToolset.UI.wixext!" -ForegroundColor Red
+    Pop-Location
+    exit 1
+}
 
 # Build the MSI with custom UI; output filename includes version per FR-015
 wix build Package.wxs CustomUI.wxs -ext WixToolset.UI.wixext -o SpeakerSight-v0.1.0.msi

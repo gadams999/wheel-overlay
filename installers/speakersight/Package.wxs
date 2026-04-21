@@ -92,8 +92,18 @@
         KeyPath="yes" />
     </Component>
 
-    <!-- App icon for shortcuts -->
+    <!-- Install directory shown in the WixUI_InstallDir directory browse dialog -->
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+
+    <!-- Icon shown in Add/Remove Programs -->
+    <Property Id="ARPPRODUCTICON" Value="AppIcon" />
+
+    <!-- App icon for shortcuts and Add/Remove Programs -->
     <Icon Id="AppIcon" SourceFile="app.ico" />
+
+    <!-- UI must live inside Package so it is included in the link graph (Fragment is dead-code-eliminated) -->
+    <WixVariable Id="WixUILicenseRtf" Value="LICENSE.rtf" />
+    <ui:WixUI Id="WixUI_InstallDir" />
 
   </Package>
 
