@@ -4,7 +4,7 @@ Design and source files for WheelOverlay graphics and icons.
 
 ## Contents
 
-- Photoshop (`.psd`) source files for icons and graphics
+- Vector or hirh-rez source files for icons and graphics
 - SVG exports used in the application (e.g., dial knob graphic)
 - Light and dark mode icon variants
 

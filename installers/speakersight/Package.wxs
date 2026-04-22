@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+
+  <Package
+    Name="SpeakerSight"
+    Manufacturer="Gavin Adams"
+    Version="0.1.0"
+    UpgradeCode="DA1C2717-7FF7-4F81-A055-0D33A7CA93C0"
+    Compressed="yes">
+
+    <!-- Enforce in-place upgrades; block downgrades with clear message -->
+    <MajorUpgrade
+      DowngradeErrorMessage="A newer version of SpeakerSight is already installed. Please uninstall it before installing this version." />
+
+    <MediaTemplate EmbedCab="yes" />
+
+    <!-- Installation directory: Program Files\OpenDash\SpeakerSight -->
+    <StandardDirectory Id="ProgramFilesFolder">
+      <Directory Id="OpenDashDir" Name="OpenDash">
+        <Directory Id="INSTALLFOLDER" Name="SpeakerSight" />
+      </Directory>
+    </StandardDirectory>
+
+    <!-- Start Menu shortcut directory -->
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Directory Id="ApplicationProgramsFolder" Name="SpeakerSight" />
+    </StandardDirectory>
+
+    <!-- Desktop shortcut directory -->
+    <StandardDirectory Id="DesktopFolder" />
+
+    <!-- Application data directory: %APPDATA%\SpeakerSight -->
+    <StandardDirectory Id="AppDataFolder">
+      <Directory Id="AppDataSpeakerSight" Name="SpeakerSight" />
+    </StandardDirectory>
+
+    <!-- Application files (populated by generate_components.ps1 / build_msi.ps1) -->
+    <Feature Id="MainApplication" Title="SpeakerSight" Level="1">
+      <ComponentGroupRef Id="AppComponents" />
+      <ComponentRef Id="StartMenuShortcut" />
+      <ComponentRef Id="DesktopShortcut" />
+      <ComponentRef Id="AppDataDir" />
+    </Feature>
+
+    <!-- Start Menu shortcut -->
+    <Component Id="StartMenuShortcut" Directory="ApplicationProgramsFolder" Guid="*">
+      <Shortcut
+        Id="StartMenuShortcut"
+        Name="SpeakerSight"
+        Description="Discord voice channel activity overlay"
+        Target="[INSTALLFOLDER]SpeakerSight.exe"
+        WorkingDirectory="INSTALLFOLDER"
+        Icon="AppIcon" />
+      <RemoveFolder Id="CleanUpStartMenuFolder" Directory="ApplicationProgramsFolder" On="uninstall" />
+      <RegistryValue
+        Root="HKCU"
+        Key="Software\Gavin Adams\SpeakerSight"
+        Name="StartMenuShortcutInstalled"
+        Type="integer"
+        Value="1"
+        KeyPath="yes" />
+    </Component>
+
+    <!-- Desktop shortcut -->
+    <Component Id="DesktopShortcut" Directory="DesktopFolder" Guid="*">
+      <Shortcut
+        Id="DesktopShortcut"
+        Name="SpeakerSight"
+        Description="Discord voice channel activity overlay"
+        Target="[INSTALLFOLDER]SpeakerSight.exe"
+        WorkingDirectory="INSTALLFOLDER"
+        Icon="AppIcon" />
+      <RegistryValue
+        Root="HKCU"
+        Key="Software\Gavin Adams\SpeakerSight"
+        Name="DesktopShortcutInstalled"
+        Type="integer"
+        Value="1"
+        KeyPath="yes" />
+    </Component>
+
+    <!-- Create %APPDATA%\SpeakerSight directory -->
+    <Component Id="AppDataDir" Directory="AppDataSpeakerSight" Guid="*">
+      <CreateFolder />
+      <RegistryValue
+        Root="HKCU"
+        Key="Software\Gavin Adams\SpeakerSight"
+        Name="AppDataDirInstalled"
+        Type="integer"
+        Value="1"
+        KeyPath="yes" />
+    </Component>
+
+    <!-- Install directory shown in the WixUI_InstallDir directory browse dialog -->
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+
+    <!-- Icon shown in Add/Remove Programs -->
+    <Property Id="ARPPRODUCTICON" Value="AppIcon" />
+
+    <!-- App icon for shortcuts and Add/Remove Programs -->
+    <Icon Id="AppIcon" SourceFile="app.ico" />
+
+    <!-- UI must live inside Package so it is included in the link graph (Fragment is dead-code-eliminated) -->
+    <WixVariable Id="WixUILicenseRtf" Value="LICENSE.rtf" />
+    <ui:WixUI Id="WixUI_InstallDir" />
+
+  </Package>
+
+  <!-- APPLICATION_FILES_START -->
+  <!-- APPLICATION_FILES_END -->
+
+</Wix>

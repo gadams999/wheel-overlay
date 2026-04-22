@@ -1,30 +1,30 @@
-ï»¿# opendash-overlays Development Guidelines
+# opendash-overlays Development Guidelines
 
-Auto-generated from all feature plans. Last updated: 2026-03-25
+Auto-generated from all feature plans. Last updated: 2026-03-31
 
 ## Active Technologies
 - C# 12 / .NET 10.0-windows + WPF (UI), WinForms (NotifyIcon/SystemTray), System.Management (WMI process monitoring), Vortice.DirectInput 3.8.2 (WheelOverlay only), FsCheck 2.16.6 + FsCheck.Xunit (property tests), xUnit 2.x, WiX 4.0.5 (MSI installer), GitHub Actions (001-opendash-monorepo-rebrand)
 - JSON settings at `%APPDATA%\WheelOverlay\settings.json`; log file at `%APPDATA%\WheelOverlay\logs.txt` (1 MB rotation) (001-opendash-monorepo-rebrand)
 - MaterialDesignThemes v5.3.1 / MaterialDesignThemes.Wpf assembly (MD2 style set, WheelOverlay settings window) (wheel-overlay/v0.7.0)
-- Python 3.14 + MkDocs Material â‰¥9.5 (docs toolchain: static site, GitHub Pages, custom hooks; deps at scripts/docs/requirements.txt) (docs/docs-hub)
+- Python 3.14 + MkDocs Material =9.5 (docs toolchain: static site, GitHub Pages, custom hooks; deps at scripts/docs/requirements.txt) (docs/docs-hub)
 
 - C# 12 / .NET 10.0-windows + WPF (UI), WinForms (NotifyIcon/SystemTray), System.Management (WMI), Vortice.DirectInput (WheelOverlay only), xUnit, FsCheck 2.16.6, WiX 4 (MSI installer), GitHub Actions (001-opendash-monorepo-rebrand)
 
 ## Project Structure
 
 ```text
-OpenDash-Overlays.sln    â€” root solution, build from here
+OpenDash-Overlays.sln    — root solution, build from here
 src/
-  OverlayCore/           â€” shared class library (no <Version>; ProjectReference only)
-  WheelOverlay/          â€” sim racing rotary encoder overlay app (v0.6.0)
+  OverlayCore/           — shared class library (no <Version>; ProjectReference only)
+  WheelOverlay/          — sim racing rotary encoder overlay app (v0.6.0)
 tests/
-  OverlayCore.Tests/     â€” property tests for shared services (FsCheck)
-  WheelOverlay.Tests/    â€” unit + property tests for WheelOverlay
-installers/wheel-overlay/ â€” WiX 4 MSI installer
-scripts/                 â€” shared scripts (Validate-PropertyTests.ps1)
-scripts/wheel-overlay/   â€” per-app build scripts
-docs/wheel-overlay/      â€” user documentation
-assets/wheel-overlay/    â€” WheelOverlay icons and source images
+  OverlayCore.Tests/     — property tests for shared services (FsCheck)
+  WheelOverlay.Tests/    — unit + property tests for WheelOverlay
+installers/wheel-overlay/ — WiX 4 MSI installer
+scripts/                 — shared scripts (Validate-PropertyTests.ps1)
+scripts/wheel-overlay/   — per-app build scripts
+docs/wheel-overlay/      — user documentation
+assets/wheel-overlay/    — WheelOverlay icons and source images
 ```
 
 ## Commands
@@ -33,10 +33,10 @@ assets/wheel-overlay/    â€” WheelOverlay icons and source images
 # Build all projects
 dotnet build OpenDash-Overlays.sln
 
-# Run tests (PR mode â€” 10 PBT iterations)
+# Run tests (PR mode — 10 PBT iterations)
 dotnet test --configuration FastTests
 
-# Run tests (release mode â€” 100 PBT iterations)
+# Run tests (release mode — 100 PBT iterations)
 dotnet test --configuration Release
 
 # Validate property test directives (run before committing)
@@ -52,14 +52,14 @@ powershell -File scripts/wheel-overlay/build_msi.ps1
 - Nullable enabled; implicit usings enabled
 - Property tests MUST include comment: `// Feature: {feature}, Property {N}: {title}`
 - Property tests MUST use `#if FAST_TESTS / #else` for iteration counts (10/100)
-- All service init failures MUST call `LogService.Error()` â€” never silently swallow
+- All service init failures MUST call `LogService.Error()` — never silently swallow
 - `LogService.Initialize("{AppName}")` MUST be first call at startup
 - OverlayCore MUST NOT have `<Version>` in its .csproj
 
 ## Recent Changes
-- docs/docs-hub: Added MkDocs Material docs hub â€” hub-and-spoke architecture, App Gallery, Python hooks for validation/deprecation/gallery, GitHub Actions deploy to docs.opendashoverlays.com
-- wheel-overlay/v0.7.0: Added MaterialDesignThemes v5.3.1 (MD2) â€” visual refactor of settings window; new MaterialDesignBootstrap helper in OverlayCore; ThemeService extended with PaletteHelper sync
-- 001-opendash-monorepo-rebrand: Added C# 12 / .NET 10.0-windows + WPF (UI), WinForms (NotifyIcon/SystemTray), System.Management (WMI process monitoring), Vortice.DirectInput 3.8.2 (WheelOverlay only), FsCheck 2.16.6 + FsCheck.Xunit (property tests), xUnit 2.x, WiX 4.0.5 (MSI installer), GitHub Actions
+- speakersight/v0.1.0: Added C# 12 / .NET 10.0-windows
+- docs/docs-hub: Added MkDocs Material docs hub — hub-and-spoke architecture, App Gallery, Python hooks for validation/deprecation/gallery, GitHub Actions deploy to docs.opendashoverlays.com
+- wheel-overlay/v0.7.0: Added MaterialDesignThemes v5.3.1 (MD2) — visual refactor of settings window; new MaterialDesignBootstrap helper in OverlayCore; ThemeService extended with PaletteHelper sync
 
 
 <!-- MANUAL ADDITIONS START -->

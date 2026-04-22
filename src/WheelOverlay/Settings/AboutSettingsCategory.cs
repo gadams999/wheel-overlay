@@ -129,7 +129,7 @@ public sealed class AboutSettingsCategory : ISettingsCategory
     {
         try
         {
-            Process.Start(new ProcessStartInfo("https://github.com/gadams999/opendash-overlays") { UseShellExecute = true });
+            Process.Start(new ProcessStartInfo("https://docs.opendashoverlays.com/wheel-overlay/") { UseShellExecute = true });
         }
         catch (Exception ex)
         {

@@ -24,7 +24,7 @@ All branches that implement a spec or target a specific app version MUST use:
 ```
 wheel-overlay/v0.8.0     ← WheelOverlay feature branch targeting v0.8.0
 wheel-overlay/v0.7.1     ← WheelOverlay patch branch
-discord-notify/v1.0.0    ← DiscordNotify initial release branch
+speakersight/v1.0.0      ← SpeakerSight initial release branch
 v2.0.0                   ← monorepo-wide (OverlayCore-only restructure)
 ```
 
@@ -84,7 +84,7 @@ from the spec folder you know what branch to check out.
 | Branch name | Valid? | Reason |
 |-------------|--------|--------|
 | `wheel-overlay/v0.8.0` | ✅ | Primary format, app-scoped |
-| `discord-notify/v1.0.0` | ✅ | Primary format, app-scoped |
+| `speakersight/v1.0.0` | ✅ | Primary format, app-scoped |
 | `v2.0.0` | ✅ | Primary format, monorepo-wide |
 | `fix/exit-handling` | ✅ | Secondary format, ad-hoc fix |
 | `docs/update-readme` | ✅ | Secondary format, docs-only |

@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Windows;
 
 namespace OpenDash.OverlayCore.Resources.Fonts;
@@ -10,8 +12,40 @@ public static class FontUtilities
 {
     private static readonly System.Windows.Media.FontFamily _fallbackFontFamily = new("Segoe UI");
 
+    // Lazy: pack:// URI is only valid once a WPF Application is running.
+    // In test runners (no Application) the factory catches and returns an empty dict.
+    private static readonly Lazy<Dictionary<string, System.Windows.Media.FontFamily>> _embeddedFonts =
+        new(() =>
+        {
+            try
+            {
+                return new Dictionary<string, System.Windows.Media.FontFamily>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["DM Sans"] = new System.Windows.Media.FontFamily(
+                        new Uri("pack://application:,,,/"),
+                        "/OverlayCore;component/Resources/Fonts/#DM Sans")
+                };
+            }
+            catch
+            {
+                return new Dictionary<string, System.Windows.Media.FontFamily>(StringComparer.OrdinalIgnoreCase);
+            }
+        });
+
+    /// <summary>
+    /// Curated list of fonts available in the overlay font picker.
+    /// Bundled fonts appear first; system fonts follow.
+    /// </summary>
+    public static readonly string[] CuratedFonts =
+    {
+        "DM Sans",
+        "Segoe UI", "Arial", "Calibri", "Consolas", "Courier New",
+        "Tahoma", "Times New Roman", "Trebuchet MS", "Verdana"
+    };
+
     /// <summary>
     /// Returns a WPF <see cref="System.Windows.Media.FontFamily"/> for the given family name.
+    /// Prefers bundled embedded fonts, then falls back to system fonts.
     /// Falls back to Segoe UI for null, empty, or unrecognized names.
     /// Never returns null.
     /// </summary>
@@ -19,6 +53,9 @@ public static class FontUtilities
     {
         if (string.IsNullOrWhiteSpace(familyName))
             return _fallbackFontFamily;
+
+        if (_embeddedFonts.Value.TryGetValue(familyName, out var embedded))
+            return embedded;
 
         try
         {

@@ -11,4 +11,7 @@
     <PackageReference Include="MaterialDesignThemes" Version="5.3.1" />
     <PackageReference Include="System.Management" Version="10.0.0" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources/Fonts/DMSans-Variable.ttf"/>
+  </ItemGroup>
 </Project>

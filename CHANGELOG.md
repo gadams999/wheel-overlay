@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **SpeakerSight v0.1.0**: New always-on-top WPF overlay that connects to the local Discord client via named-pipe IPC (Discord RPC protocol), authenticates via OAuth2 PKCE (no embedded client secret), subscribes to `SPEAKING_START`/`SPEAKING_STOP` voice events, and displays active speakers with grace-period fade on a click-through overlay window. Tokens stored in Windows Credential Manager (DPAPI-encrypted). Configurable debounce, grace period, display mode (speakers-only / all-members), per-context member aliases with custom display names, and avatar visibility toggle. WiX 4 MSI installer (`SpeakerSight-v0.1.0.msi`).
 - **Documentation Hub**: New documentation site at docs.opendashoverlays.com with App Gallery, WheelOverlay documentation section, Common Setup shared prerequisites, and contributor guide
 
 ## [0.7.0] - 2026-03-24

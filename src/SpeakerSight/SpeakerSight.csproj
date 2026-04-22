@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>OpenDash.SpeakerSight</RootNamespace>
+    <Version>0.1.0</Version>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+    <FileVersion>0.1.0.0</FileVersion>
+    <StartupObject>OpenDash.SpeakerSight.Program</StartupObject>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+<ApplicationIcon>..\..\assets\speakersight\app.ico</ApplicationIcon>
+    <Authors>Gavin Adams</Authors>
+    <Company>Gavin Adams</Company>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OverlayCore\OverlayCore.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Meziantou.Framework.Win32.CredentialManager" Version="1.7.17" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="..\..\assets\speakersight\app.ico" Link="app.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>SpeakerSight.Tests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+</Project>

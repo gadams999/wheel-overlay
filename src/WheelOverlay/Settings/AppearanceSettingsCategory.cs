@@ -175,14 +175,7 @@ public sealed class AppearanceSettingsCategory : ISettingsCategory
         MaterialDesignThemes.Wpf.HintAssist.SetHint(combo, "Font Family");
         combo.Style = (Style)System.Windows.Application.Current.FindResource("MaterialDesignComboBox");
 
-        // Provide a curated list of common system fonts
-        var fonts = new[]
-        {
-            "Segoe UI", "Arial", "Calibri", "Consolas", "Courier New",
-            "Tahoma", "Times New Roman", "Trebuchet MS", "Verdana"
-        };
-
-        foreach (var font in fonts)
+        foreach (var font in FontUtilities.CuratedFonts)
         {
             combo.Items.Add(new ComboBoxItem
             {

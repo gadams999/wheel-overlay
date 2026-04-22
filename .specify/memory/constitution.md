@@ -1,32 +1,29 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version change: 2.0.0 → 2.1.0
-Version bump type: MINOR — New Principle VII added (Documentation and Public Site).
-Adds non-negotiable rules for the project website (opendashoverlays.com),
-user-facing documentation site (docs.opendashoverlays.com), GitHub Pages hosting,
-and MkDocs with the Material Design theme as the documentation toolchain.
+Version change: 2.1.2 → 2.1.3
+Version bump type: PATCH — Replace fictional `discord-notify` branch-name examples
+with `speakersight` examples throughout Principle VI and the branching procedure,
+reflecting the project's actual overlay naming after the Discord Chat Overlay →
+SpeakerSight rename (2026-04-19).
 
 Modified principles:
-  - None. Existing principles I–VI unchanged.
+  - Principle VI: Branch Naming — example `discord-notify/v1.0.0` →
+    `speakersight/v1.0.0` in both valid-examples block and the invalid-examples
+    table comment. No rule changes.
 
 Added sections:
-  - Principle VII: Documentation and Public Site — covers FQDN ownership, GitHub
-    Pages hosting, MkDocs + Material Design toolchain, content standards, and
-    CI/CD publication requirements.
+  - None.
 
 Removed sections:
   - None.
 
 Templates updated:
-  ✅ .specify/memory/constitution.md — this file (v2.1.0).
-  ✅ .specify/memory/procedures-documentation.md — extended with MkDocs build
-     and deployment steps, directory layout, and pre-push checklist additions.
-  ⚠  .specify/templates/plan-template.md — no structural change needed; the
-     "Constitution Check" gate will naturally surface Principle VII for
-     documentation-touching specs.
-  ⚠  .specify/templates/spec-template.md — no structural change needed.
-  ⚠  .specify/templates/tasks-template.md — no structural change needed.
+  ✅ .specify/memory/constitution.md — this file (v2.1.3).
+  ✅ .specify/memory/procedures-branching.md — same example substitution.
+  ⚠  .specify/templates/plan-template.md — no change needed (placeholders only).
+  ⚠  .specify/templates/spec-template.md — no change needed (placeholders only).
+  ⚠  .specify/templates/tasks-template.md — no change needed (placeholders only).
 
 Deferred TODOs:
   - None. All fields resolved.
@@ -193,7 +190,7 @@ Valid examples:
 ```
 wheel-overlay/v0.8.0     ← WheelOverlay feature targeting v0.8.0
 wheel-overlay/v0.7.1     ← WheelOverlay patch targeting v0.7.1
-discord-notify/v1.0.0    ← DiscordNotify initial release
+speakersight/v1.0.0      ← SpeakerSight initial release
 v2.0.0                   ← monorepo-wide (OverlayCore breaking change)
 ```
 
@@ -377,4 +374,4 @@ spec time.
 are MAJOR. New principles or new SHOULD guidance are MINOR. Typos, examples,
 and rationale additions are PATCH.
 
-**Version**: 2.1.2 | **Ratified**: 2026-03-18 | **Last Amended**: 2026-03-26
+**Version**: 2.1.3 | **Ratified**: 2026-03-18 | **Last Amended**: 2026-04-19

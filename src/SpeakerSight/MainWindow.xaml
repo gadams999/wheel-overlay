@@ -1,0 +1,195 @@
+<Window x:Class="OpenDash.SpeakerSight.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:conv="clr-namespace:OpenDash.SpeakerSight.Converters"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Foreground="White"
+        Topmost="True"
+        ShowInTaskbar="True"
+        SizeToContent="WidthAndHeight"
+        ResizeMode="NoResize">
+
+    <Window.Resources>
+        <!-- Declared here (not only in App.xaml) so StaticResource lookup inside
+             the DataTemplate is guaranteed to find them regardless of when
+             MaterialDesignBootstrap modifies Application.Resources.MergedDictionaries. -->
+        <conv:AvatarUrlConverter              x:Key="AvatarUrlConverter"/>
+        <conv:BoolToVisibilityConverter       x:Key="BoolToVisibilityConverter"/>
+        <conv:SpacingToThicknessConverter     x:Key="SpacingToThicknessConverter"/>
+        <conv:SpacingToCornerRadiusConverter  x:Key="SpacingToCornerRadiusConverter"/>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Auth-required banner — visible when Discord authorization has been revoked -->
+        <Button Grid.Row="0"
+                x:Name="AuthBanner"
+                Cursor="Hand"
+                BorderThickness="0"
+                Padding="10,7,10,7"
+                Click="AuthBanner_Click">
+            <Button.Style>
+                <Style TargetType="Button">
+                    <Setter Property="Background" Value="#CC8B0000"/>
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="{TemplateBinding Background}"
+                                        CornerRadius="4"
+                                        Padding="{TemplateBinding Padding}">
+                                    <ContentPresenter HorizontalAlignment="Center"
+                                                      VerticalAlignment="Center"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsAuthRequired}" Value="True">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#CCBF0000"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                <TextBlock Text="⚠ Discord authorization required"
+                           Foreground="#FFEEAA"
+                           FontSize="12"
+                           FontWeight="SemiBold"
+                           TextOptions.TextFormattingMode="Display"
+                           HorizontalAlignment="Center"/>
+                <TextBlock Text="Click to authorize"
+                           Foreground="#FFDDAA"
+                           FontSize="11"
+                           TextOptions.TextFormattingMode="Display"
+                           HorizontalAlignment="Center"
+                           Margin="0,2,0,0"/>
+            </StackPanel>
+        </Button>
+
+        <!-- Drag handle — only visible when Settings window is open -->
+        <Border x:Name="DragHandleBorder"
+                Grid.Row="1"
+                Background="#CC1A1A2E"
+                CornerRadius="4,4,0,0"
+                Padding="8,5,8,5"
+                Cursor="SizeAll"
+                Visibility="Collapsed"
+                MouseLeftButtonDown="DragHandle_MouseLeftButtonDown">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="✥"
+                           Foreground="#AAAACC"
+                           FontSize="13"
+                           VerticalAlignment="Center"
+                           Margin="0,0,6,0"/>
+                <TextBlock Text="Drag to reposition overlay"
+                           Foreground="#AAAACC"
+                           FontSize="11"
+                           VerticalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Connection indicator (hidden when null) -->
+        <TextBlock Grid.Row="2"
+                   Text="{Binding ConnectionIndicator}"
+                   Foreground="#FFCC00"
+                   FontSize="12"
+                   Margin="8,4,8,2"
+                   TextOptions.TextFormattingMode="Display">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ConnectionIndicator}" Value="{x:Null}">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+
+        <!-- Speaker list -->
+        <ItemsControl Grid.Row="3"
+                      ItemsSource="{Binding ActiveSpeakers}"
+                      Margin="4,0,4,0">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <!-- Outer row — opacity drives the fade animation -->
+                    <Grid Opacity="{Binding Opacity}"
+                          Margin="{Binding SpeakerSpacing, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource SpacingToThicknessConverter}}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="32"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Avatar image (Hidden not Collapsed to preserve column width per FR-014b-layout) -->
+                        <!-- Clip to circle to match Discord's rendering style; CDN delivers square images -->
+                        <Image Grid.Column="0"
+                               Width="28" Height="28"
+                               VerticalAlignment="Center"
+                               RenderOptions.BitmapScalingMode="HighQuality">
+                            <Image.Clip>
+                                <EllipseGeometry Center="14,14" RadiusX="14" RadiusY="14"/>
+                            </Image.Clip>
+                            <Image.Source>
+                                <MultiBinding Converter="{StaticResource AvatarUrlConverter}">
+                                    <Binding Path="GuildId"/>
+                                    <Binding Path="UserId"/>
+                                    <Binding Path="GuildAvatarHash"/>
+                                    <Binding Path="AvatarHash"/>
+                                </MultiBinding>
+                            </Image.Source>
+                            <Image.Visibility>
+                                <Binding Path="AvatarVisible" Converter="{StaticResource BoolToVisibilityConverter}"/>
+                            </Image.Visibility>
+                        </Image>
+
+                        <!-- Display name — Background and Foreground both user-configurable -->
+                        <!-- HorizontalAlignment=Left so the background pill wraps text width only -->
+                        <!-- CornerRadius collapses to 0 at spacing=0 to eliminate junction gaps -->
+                        <Border Grid.Column="1"
+                                HorizontalAlignment="Left"
+                                Background="{Binding SpeakerBackground, RelativeSource={RelativeSource AncestorType=Window}}"
+                                CornerRadius="{Binding SpeakerSpacing, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource SpacingToCornerRadiusConverter}}"
+                                Padding="6,4,4,4">
+                            <TextBlock Text="{Binding DisplayName}"
+                                       VerticalAlignment="Center"
+                                       TextOptions.TextFormattingMode="Display"/>
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <!-- +N more overflow label -->
+        <TextBlock Grid.Row="4"
+                   Foreground="#AAAAAA"
+                   FontSize="12"
+                   Margin="8,2,8,4"
+                   TextOptions.TextFormattingMode="Display">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding OverflowCount}" Value="0">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+            <Run Text="+"/>
+            <Run Text="{Binding OverflowCount, Mode=OneWay}"/>
+            <Run Text=" more"/>
+        </TextBlock>
+    </Grid>
+</Window>

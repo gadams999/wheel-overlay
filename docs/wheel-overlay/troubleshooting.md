@@ -57,7 +57,9 @@ Windows display scaling above 100% can shift window positions unexpectedly — c
 
 ### Check always-on-top behaviour
 
-WheelOverlay stays on top of other windows. Some fullscreen exclusive games override this. Try running your sim in **borderless windowed** mode rather than exclusive fullscreen, which allows overlays to remain visible.
+WheelOverlay stays on top of other windows using a standard Windows always-on-top window. **Exclusive fullscreen mode is not supported** — when a game runs in exclusive fullscreen, it takes direct control of the display and the overlay will not be visible.
+
+Run your sim in **borderless windowed** mode. See [Game Display Mode Compatibility](/common-setup/#game-display-mode-compatibility) for step-by-step instructions.
 
 ### Overlay placement tips
 

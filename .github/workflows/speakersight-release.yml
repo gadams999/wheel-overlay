@@ -1,0 +1,121 @@
+name: SpeakerSight Release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'speakersight/v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-test:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 10.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Validate SpeakerSight property test directives
+      run: |
+        .\scripts\Validate-PropertyTests.ps1 -TestProjectPath tests/SpeakerSight.Tests
+      shell: pwsh
+
+    - name: Validate OverlayCore property test directives
+      run: |
+        .\scripts\Validate-PropertyTests.ps1 -TestProjectPath tests/OverlayCore.Tests
+      shell: pwsh
+
+    - name: Build
+      run: dotnet build --no-restore --configuration Release /p:TreatWarningsAsErrors=true
+      shell: pwsh
+
+    - name: Test
+      run: dotnet test --no-build --verbosity normal --configuration Release
+      shell: pwsh
+
+  package-and-release:
+    needs: build-and-test
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 10.0.x
+
+    - name: Install WiX Toolset v4.0.5
+      run: |
+        dotnet tool install --global wix --version 4.0.5
+        wix extension add WixToolset.UI.wixext/4.0.5
+      shell: pwsh
+
+    - name: Parse version from .csproj
+      id: get_version
+      run: |
+        [xml]$csproj = Get-Content 'src/SpeakerSight/SpeakerSight.csproj'
+        $csprojVersion = $csproj.Project.PropertyGroup.Version
+        Write-Host "csproj version: $csprojVersion"
+        echo "CSPROJ_VERSION=$csprojVersion" >> $env:GITHUB_ENV
+        echo "CSPROJ_VERSION=$csprojVersion" >> $env:GITHUB_OUTPUT
+      shell: pwsh
+
+    - name: Validate tag version matches .csproj (tag-triggered only)
+      if: startsWith(github.ref, 'refs/tags/speakersight/v')
+      run: |
+        $tagVersion = $env:GITHUB_REF_NAME -replace 'speakersight/v', ''
+        $csprojVersion = $env:CSPROJ_VERSION
+        Write-Host "Tag version:    $tagVersion"
+        Write-Host "csproj version: $csprojVersion"
+        if ($tagVersion -ne $csprojVersion) {
+          Write-Error "Tag version '$tagVersion' does not match .csproj version '$csprojVersion'. Update the version in src/SpeakerSight/SpeakerSight.csproj before tagging."
+          exit 1
+        }
+        Write-Host "Version validation passed: $tagVersion"
+      shell: pwsh
+
+    - name: Build MSI installer
+      run: .\scripts\speakersight\build_msi.ps1
+      shell: pwsh
+
+    - name: Extract CHANGELOG release notes
+      id: changelog
+      run: |
+        $version = $env:CSPROJ_VERSION
+        $changelog = Get-Content CHANGELOG.md -Raw
+        $pattern = "## \[$version\].*?(?=## \[|\z)"
+        $match = [regex]::Match($changelog, $pattern, [System.Text.RegularExpressions.RegexOptions]::Singleline)
+        if ($match.Success) {
+          $notes = $match.Value.Trim()
+        } else {
+          $notes = "Release SpeakerSight v$version"
+        }
+        $notes | Out-File -FilePath release_notes.md -Encoding utf8
+        Write-Host "Release notes extracted"
+      shell: pwsh
+
+    - name: Create GitHub release
+      if: startsWith(github.ref, 'refs/tags/speakersight/v')
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ github.ref_name }}
+        name: SpeakerSight v${{ steps.get_version.outputs.CSPROJ_VERSION }}
+        body_path: release_notes.md
+        draft: false
+        prerelease: false
+        files: |
+          installers/speakersight/bin/SpeakerSight-v${{ steps.get_version.outputs.CSPROJ_VERSION }}.msi
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
