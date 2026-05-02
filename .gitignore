@@ -1,8 +1,9 @@
 # Kiro IDE files - track steering, specs, and settings
 # Exclude only transient/cache files if any appear later
 
-# Claude Code local settings and memory (machine-specific)
-.claude/
+# Claude Code local settings (machine-specific; commands/ is tracked for sharing)
+.claude/settings.local.json
+.claude/memory/
 
 # Temporary working notes
 temp/
