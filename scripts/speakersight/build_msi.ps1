@@ -127,8 +127,17 @@ if ($LASTEXITCODE -ne 0) {
     exit 1
 }
 
+# Resolve version: prefer $env:CSPROJ_VERSION (set by CI), fall back to reading the csproj
+if ($env:CSPROJ_VERSION) {
+    $version = $env:CSPROJ_VERSION
+} else {
+    [xml]$csproj = Get-Content "$repoRoot\src\SpeakerSight\SpeakerSight.csproj"
+    $version = $csproj.Project.PropertyGroup.Version
+}
+$msiFilename = "SpeakerSight-v$version.msi"
+
 # Build the MSI with custom UI; output filename includes version per FR-015
-wix build Package.wxs CustomUI.wxs -ext WixToolset.UI.wixext -o SpeakerSight-v0.1.0.msi
+wix build Package.wxs CustomUI.wxs -ext WixToolset.UI.wixext -o $msiFilename
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "MSI build failed!" -ForegroundColor Red
@@ -145,7 +154,7 @@ Write-Host ""
 Write-Host "[4/4] Build Complete!" -ForegroundColor Green
 Write-Host ""
 Write-Host "Output Files:" -ForegroundColor Cyan
-Write-Host "  MSI Installer: .\Package\SpeakerSight-v0.1.0.msi" -ForegroundColor White
+Write-Host "  MSI Installer: .\Package\$msiFilename" -ForegroundColor White
 Write-Host "  Application:   .\Publish\SpeakerSight.exe" -ForegroundColor White
 Write-Host ""
 Write-Host "To install, run:" -ForegroundColor Yellow

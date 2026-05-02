@@ -116,6 +116,6 @@ jobs:
         draft: false
         prerelease: false
         files: |
-          installers/speakersight/bin/SpeakerSight-v${{ steps.get_version.outputs.CSPROJ_VERSION }}.msi
+          Package/SpeakerSight-v${{ steps.get_version.outputs.CSPROJ_VERSION }}.msi
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
